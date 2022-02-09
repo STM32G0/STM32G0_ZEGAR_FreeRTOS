@@ -1,0 +1,2 @@
+# STM32G0_ZEGAR_FreeRTOS
+ STM32G0 Zegar projekt
