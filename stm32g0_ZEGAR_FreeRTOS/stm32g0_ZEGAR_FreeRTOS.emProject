@@ -50,6 +50,19 @@
     <folder Name="Source Files">
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
       <file file_name="main.c" />
+      <folder Name="MCU peripheral config">
+        <file file_name="clock_config.c" />
+        <file file_name="i2c_config.c" />
+        <file file_name="interrupt_config.c" />
+        <file file_name="pin_config.c" />
+        <file file_name="spi_config.c" />
+        <file file_name="system_config.c" />
+        <file file_name="timer_config.c" />
+      </folder>
+      <file file_name="mcp79410.c" />
+      <folder Name="Interface">
+        <file file_name="mcp79410_interface.c" />
+      </folder>
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />
@@ -58,10 +71,34 @@
         <configuration Name="Common" file_type="Assembly" />
       </file>
     </folder>
+    <folder
+      Name="FreeRTOS"
+      exclude=""
+      filter=""
+      path="FreeRTOS"
+      recurse="Yes" />
+    <folder Name="Header Files">
+      <file file_name="FreeRTOSConfig.h" />
+      <folder Name="MCU peripheral config">
+        <file file_name="clock_config.h" />
+        <file file_name="i2c_config.h" />
+        <file file_name="interrupt_config.h" />
+        <file file_name="pin_config.h" />
+        <file file_name="spi_config.h" />
+        <file file_name="system_config.h" />
+        <file file_name="timer_config.h" />
+      </folder>
+      <file file_name="delay.h" />
+      <file file_name="mcp79410.h" />
+      <folder Name="Interface">
+        <file file_name="mcp79410_interface.h" />
+      </folder>
+    </folder>
   </project>
   <configuration
     Name="Debug"
     c_preprocessor_definitions="DEBUG"
+    c_user_include_directories=".;$(ProjectDir)/FreeRTOS/Source/include;$(ProjectDir)/FreeRTOS/Source/portable/GCC/ARM_CM0"
     gcc_debugging_level="Level 3"
     gcc_optimization_level="None" />
   <configuration
