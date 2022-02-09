@@ -45,22 +45,29 @@ GPIOA->AFR[1] |= (GPIO_AFRH_AFSEL9_1 | GPIO_AFRH_AFSEL9_2) ; //set
 /*for PB9*/
 GPIOB->AFR[1] |= (GPIO_AFRH_AFSEL9_1 | GPIO_AFRH_AFSEL9_2) ; //set
 
-/********** PA8 set Out for LED **********************/
-GPIOA->MODER &= ~GPIO_MODER_MODE8_1 ;  //MODE8 -> 0b01  LED
+/********** PC15 set Out for LED2 **********************/
+GPIOC->MODER &= ~GPIO_MODER_MODE15_1; //MODE15 -> 0b01
+/********** PC14 set Out for LED1 **********************/
+GPIOC->MODER &= ~GPIO_MODER_MODE14_1; //MODE14 -> 0b01
 
-/********** PB1 set for EXTI ************/
+
+/********** PA3 set Out for CS MAX7219 **********************/
+GPIOA->MODER &= ~GPIO_MODER_MODE3_1; //MODE3 -> 0b01
+
+
+/********** PB5 set for EXTI ************/
 /*set Input (0b00)*/
-//GPIOB->MODER &= ~(GPIO_MODER_MODE1_0 | GPIO_MODER_MODE1_1); 
+GPIOB->MODER &= ~(GPIO_MODER_MODE5_0 | GPIO_MODER_MODE5_1); 
 /*set low speed (0b01)*/
-//GPIOB->OSPEEDR |= GPIO_OSPEEDR_OSPEED1_0 ;
-//GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED1_1 ;
+GPIOB->OSPEEDR |= GPIO_OSPEEDR_OSPEED5_0 ;
+GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED5_1 ;
 /*set Pull-Up (0b01)*/
-//GPIOB->PUPDR |= GPIO_PUPDR_PUPD1_0 ;
-//GPIOB->PUPDR &= ~GPIO_PUPDR_PUPD1_1;
-/*set EXTI for PB1*/
-//EXTI->EXTICR[0] |= EXTI_EXTICR1_EXTI1_0 ;
-/*set EXTI Falling triger for PB1*/
-//EXTI->FTSR1 |= EXTI_FTSR1_FT1 ;
-/*set EXTI Interrupt no-masked for PB1*/
-//EXTI->IMR1 |= EXTI_IMR1_IM1 ;
+GPIOB->PUPDR |= GPIO_PUPDR_PUPD5_0 ;
+GPIOB->PUPDR &= ~GPIO_PUPDR_PUPD5_1;
+/*set EXTI for PB5*/
+EXTI->EXTICR[1] |= EXTI_EXTICR2_EXTI5_0 ;
+/*set EXTI Falling triger for PB5*/
+EXTI->FTSR1 |= EXTI_FTSR1_FT5 ;
+/*set EXTI Interrupt no-masked for PB5*/
+EXTI->IMR1 |= EXTI_IMR1_IM5 ;
 }

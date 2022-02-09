@@ -6,7 +6,7 @@ IDE   : SEGGER Embedded Studio
 ******************************************/
 
 #include "mcp79410_interface.h"
-#include "i2c_manager.h"
+#include "i2c_config.h"
 #include "mcp79410.h"
 
 /*do wskaznikow przypisujemy funkcje*/

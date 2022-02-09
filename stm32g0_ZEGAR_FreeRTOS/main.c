@@ -9,6 +9,7 @@ IDE   : SEGGER Embedded Studio
 #include <stdint.h>
 #include <stm32g071xx.h>
 #include "system_config.h"
+#include "mcp79410_interface.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
