@@ -68,16 +68,17 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="9" y="28" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="FreeRTOS/Source/croutine.c" selected="0" top="18" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="11" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="64" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="18" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="clock_config.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="33" y="67" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.c" selected="1" top="33" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="33" y="67" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.c" selected="0" top="33" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="43" y="5" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="13" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="10" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410_interface.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="18" y="1" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="30" y="4" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410_interface.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="62" y="23" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="14" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="29" y="17" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="FreeRTOSConfig.h" selected="0" top="6" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

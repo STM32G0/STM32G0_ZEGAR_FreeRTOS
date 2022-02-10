@@ -8,12 +8,14 @@ IDE   : SEGGER Embedded Studio
 #include <stdlib.h>
 #include <stdint.h>
 #include <stm32g071xx.h>
+#include <stdbool.h>
 #include "system_config.h"
 #include "mcp79410_interface.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 
+volatile bool intFlag = 0;
 static void prvSetupHardware(void);
 void vLEDTask( void *pvParameters );
 
@@ -48,9 +50,17 @@ void vLEDTask(void *pvParameters) {
 
 	for (;;) {
 
-		GPIOA->ODR ^= GPIO_ODR_OD8 ; //LED - PA8 toggle
+		
 		vTaskDelay(500);
 	}
 
 	vTaskDelete(NULL);
+}
+
+
+void EXTI4_15_IRQHandler(void){
+intFlag = 1;
+if(EXTI->FPR1 & EXTI_FPR1_FPIF5)
+EXTI->FPR1 |= EXTI_FPR1_FPIF5; //clear pending
+LED2_Toggle();
 }
