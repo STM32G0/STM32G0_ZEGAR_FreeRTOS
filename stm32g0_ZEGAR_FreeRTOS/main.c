@@ -25,7 +25,7 @@ int main(void) {
 	prvSetupHardware();
  
 	// Creating tasks
-	xTaskCreate( vLEDTask, "LEDTask", 100, NULL, 1, NULL );
+	xTaskCreate( vLEDTask, "LEDTask", 100, NULL, 4 , NULL );
 	// ..
  
 	// Start the scheduler
@@ -43,6 +43,7 @@ static void prvSetupHardware(void)
 	// It's place to hardware configuration, like e.g. clock external source
         SystemInit();
         SYSTEM_MANAGER_Initialize();
+        mcp79410.InitRTCC();
 }
 
 
