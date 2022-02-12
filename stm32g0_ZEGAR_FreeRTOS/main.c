@@ -9,15 +9,19 @@ IDE   : SEGGER Embedded Studio
 #include <stdint.h>
 #include <stm32g071xx.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "system_config.h"
 #include "mcp79410_interface.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 
+//#define NDEBUG // activate if not use Assert control
+
 volatile bool intFlag = 0;
 static void prvSetupHardware(void);
-void vLEDTask( void *pvParameters );
+void vClockTask( void *pvParameters );
+
 
 int main(void) {
 
@@ -25,9 +29,9 @@ int main(void) {
 	prvSetupHardware();
  
 	// Creating tasks
-	xTaskCreate( vLEDTask, "LEDTask", 100, NULL, 4 , NULL );
+	assert( xTaskCreate( vClockTask, "ClockTask", 100, NULL, 4 , NULL ) == pdPASS); //Assert create task control
 	// ..
- 
+    
 	// Start the scheduler
 	vTaskStartScheduler(); // should never return
  
@@ -47,7 +51,7 @@ static void prvSetupHardware(void)
 }
 
 
-void vLEDTask(void *pvParameters) {
+void vClockTask(void *pvParameters) {
 
 	for (;;) {
 
@@ -65,3 +69,6 @@ if(EXTI->FPR1 & EXTI_FPR1_FPIF5)
 EXTI->FPR1 |= EXTI_FPR1_FPIF5; //clear pending
 LED2_Toggle();
 }
+
+ 
+ 
