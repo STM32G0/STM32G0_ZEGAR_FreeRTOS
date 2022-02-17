@@ -18,9 +18,6 @@ IDE   : SEGGER Embedded Studio
 #include "queue.h"
 #include "semphr.h"
 
-//#define NDEBUG // activate if not use Assert control
-
-volatile bool intFlag = 0;
 static void prvSetupHardware(void);
 void vClockTask( void *pvParameters );
 SemaphoreHandle_t xSemaphoreClockTask;
@@ -31,8 +28,8 @@ int main(void) {
 	prvSetupHardware();
          
 	// Creating tasks
-	assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL ) == pdPASS); // assert create task control
-            
+	 assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL ) == pdPASS); // assert create task control
+        
 	// Start the scheduler
 	vTaskStartScheduler(); // should never return
  
@@ -75,12 +72,9 @@ void vClockTask(void *pvParameters) {
 
 /*signal on PB5 pin generate IRQ*/
 void EXTI4_15_IRQHandler(void){
-intFlag = 1;
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 if(EXTI->FPR1 & EXTI_FPR1_FPIF5){
 EXTI->FPR1 |= EXTI_FPR1_FPIF5; //clear pending
-/* Is it time for vClockTask to run */
-xHigherPriorityTaskWoken = pdTRUE;
 xSemaphoreGiveFromISR( xSemaphoreClockTask, &xHigherPriorityTaskWoken );
 /* If xHigherPriorityTaskWoken was set to true you
     we should yield.  The actual macro used here is

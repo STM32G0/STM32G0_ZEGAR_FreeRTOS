@@ -5,7 +5,7 @@
 **********************************************************************
 
 File          : C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/OzoneStart.jdebug
-Created       : 11 Feb 2022 11:58
+Created       : 17 Feb 2022 13:16
 Ozone Version : V3.26b
 */
 
@@ -25,7 +25,7 @@ void OnProjectLoad (void) {
   Project.AddPathSubstitute ("C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS", "$(ProjectDir)");
   Project.AddPathSubstitute ("c:/users/wojte/documents/segger embedded studio for arm projects/github/stm32g0_project/stm32g0_zegar_freertos/stm32g0_zegar_freertos", "$(ProjectDir)");
   Project.SetDevice ("STM32G071KB");
-  Project.SetHostIF ("USB", "801007131");
+  Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("4 MHz");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M0.svd");
