@@ -1,9 +1,7 @@
 <!DOCTYPE CrossStudio_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints groups="Breakpoints" active_group="Breakpoints">
-  <Exceptions set="HardFault"/>
- </Breakpoints>
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints"/>
  <ExecutionProfileWindow/>
  <FrameBufferWindow>
   <FrameBufferWindow bufferHeight="-1" addressSpace="" addressText="" bufferWidth="-1"/>
@@ -31,12 +29,16 @@
  <Project>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS"/>
+  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS"/>
+  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source"/>
+  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source;include"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;Interface"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;MCU peripheral config"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;Interface"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;MCU peripheral config"/>
+  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;System Files"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal;GPIOB/MODER;GPIOB/OTYPER;GPIOB/OSPEEDR;GPIOB/PUPDR;GPIOB/IDR;GPIOB/ODR;GPIOB/BSRR;GPIOB/LCKR;GPIOB/AFRL;GPIOB/AFRH;GPIOB/BRR;EXTI/RTSR1;EXTI/FTSR1;EXTI/SWIER1;EXTI/RPR1;EXTI/FPR1;EXTI/EXTICR1;EXTI/EXTICR2;EXTI/EXTICR3;EXTI/EXTICR4;EXTI/IMR1;EXTI/EMR1;EXTI/IMR2;EXTI/EMR2;EXTI/HWCFGR7;EXTI/HWCFGR6;EXTI/HWCFGR5;EXTI/HWCFGR4;EXTI/HWCFGR3;EXTI/HWCFGR2;EXTI/HWCFGR1;EXTI/VERR;EXTI/IPIDR;EXTI/SIDR" binaryNodes="" asciiNodes="" openNodes="GPIOB;EXTI;EXTI/RTSR1;EXTI/EXTICR1;EXTI/EXTICR2" name="stm32g0_CAP1296" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -66,8 +68,7 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="__assert" name="__assert" radix="16" linenumber="36" filename="main.c"/>
-   <Watchpoint expression="__LINE__" name="__LINE__" radix="16" linenumber="36" filename="main.c"/>
+   <Watchpoint expression="Prorytet" name="Prorytet" radix="16" linenumber="79" filename="main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -80,20 +81,11 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="31" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="0" top="22" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="16" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="clock_config.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="41" useTextEdit="1" openedFrom="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/mcp79410_interface.c" useBinaryEdit="0" left="0" path="mcp79410.c" selected="0" top="15" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="60" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.c" selected="0" top="45" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="16" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410_interface.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="1" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="97" y="14" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="FreeRTOSConfig.h" selected="1" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="15" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="interrupt_config.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="34" y="30" useTextEdit="1" openedFrom="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/main.c" useBinaryEdit="0" left="0" path="mcp79410_interface.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.c" selected="0" top="24" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="system_config.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="system_config.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="73" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="36" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="32" y="60" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="FreeRTOSConfig.h" selected="0" top="42" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="12" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="interrupt_config.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="38" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410.c" selected="0" top="9" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="166" useTextEdit="1" openedFrom="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/main.c" useBinaryEdit="0" left="0" path="FreeRTOS/Source/include/semphr.h" selected="0" top="144" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="4543"/>
+ <ARMCrossStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

@@ -46,7 +46,7 @@ i2c_rtcc_wr(ADDR_DAY,day | VBATEN);  // enable the battery back-up
 /*Set Time*/
 i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
 i2c_rtcc_wr(ADDR_MNTH,0x01);         // initialize MONTH register : styczeñ  
-i2c_rtcc_wr(ADDR_DATE,0x01);         // initialize DATE  register : date = 01  
+i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date = 16  
 i2c_rtcc_wr(ADDR_HOUR,0x00);         // initialize HOUR  register : hour = 00  
 i2c_rtcc_wr(ADDR_MIN,0x00) ;         // initialize MIN   register : min  = 00  
 i2c_rtcc_wr(ADDR_SEC,START_32KHZ);   // init SEC register and start the 32khz oscillator .

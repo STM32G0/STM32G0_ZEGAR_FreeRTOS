@@ -20,8 +20,8 @@ void PIN_MANAGER_Initialize(void);
 #define LED1_Toggle()            ((GPIOC->ODR & GPIO_ODR_OD14)  ? (GPIOC->BSRR |= GPIO_BSRR_BR14) : (GPIOC->BSRR |= GPIO_BSRR_BS14))
 
 /* definitions for CS (MAX7219) on PA3 */
-#define CS_SetHigh()           (GPIOA->BSRR |= GPIO_BSRR_BS3) 
-#define CS_SetLow()            (GPIOA->BSRR |= GPIO_BSRR_BR3) 
+#define CS_SetHigh()            (GPIOA->BSRR |= GPIO_BSRR_BS3) 
+#define CS_SetLow()             (GPIOA->BSRR |= GPIO_BSRR_BR3) 
 
 
 #endif /*PIN_CONFIG_H*/

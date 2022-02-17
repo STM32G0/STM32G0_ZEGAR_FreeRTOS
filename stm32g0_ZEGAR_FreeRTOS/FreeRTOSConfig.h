@@ -2,6 +2,7 @@
 #define FREERTOS_CONFIG_H
 
 #include <stdint.h>
+#define configPRIO_BITS         __NVIC_PRIO_BITS // priority levels in CMISIS, STM32G0 value 2
 	
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK			0
@@ -12,7 +13,6 @@
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 60 )
 #define configTOTAL_HEAP_SIZE			( ( size_t ) ( 6500 ) )
 #define configMAX_TASK_NAME_LEN			( 16 )
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY    5 // prioryty 0...4 use ISR hardware not use API FreeRTOS
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
 #define configIDLE_SHOULD_YIELD			1
@@ -29,6 +29,18 @@
 #define configUSE_COUNTING_SEMAPHORES           1
 #define configGENERATE_RUN_TIME_STATS           0
 
+/* The lowest interrupt priority that can be used in a call to a "set priority" function. */
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   0x03
+/* The highest interrupt priority that can be used by any interrupt service
+   routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
+   INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
+   PRIORITY THAN THIS! (higher priorities are lower numeric values. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY 0x02
+/* Interrupt priorities used by the kernel port layer itself.  These are generic
+   to all Cortex-M ports, and do not rely on any particular library functions. */
+#define configKERNEL_INTERRUPT_PRIORITY   ( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
+/* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!*/
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 			0
@@ -50,9 +62,15 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelayUntil			1
 #define INCLUDE_vTaskDelay			1
 
+#define INCLUDE_xResumeFromISR                  1
+#define INCLUDE_xTaskGetSchedulerState          1
+#define INCLUDE_xTaskGetCurrentTaskHandle       1
+#define INCLUDE_xEventGroupSetBitFromISR        1
+#define INCLUDE_xTaskResumeFromISR              1
+
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
-#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+//#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
 standard names - or at least those used in the unmodified vector table. */

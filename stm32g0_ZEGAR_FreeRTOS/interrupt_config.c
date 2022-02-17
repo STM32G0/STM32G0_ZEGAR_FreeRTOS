@@ -10,7 +10,7 @@ IDE   : SEGGER Embedded Studio
 
 void INTERRUPT_MANAGER_Initialize(void){
 /* EXTI interrupt init*/
- NVIC_SetPriority(EXTI4_15_IRQn, 1);
+ NVIC_SetPriority(EXTI4_15_IRQn, 2);
  NVIC_EnableIRQ(EXTI4_15_IRQn);
 
 }
