@@ -81,7 +81,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="34" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="45" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="72" y="77" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="6" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="32" y="60" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="FreeRTOSConfig.h" selected="0" top="42" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="1" y="15" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="interrupt_config.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="38" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="mcp79410.c" selected="0" top="9" codecName="Default"/>
