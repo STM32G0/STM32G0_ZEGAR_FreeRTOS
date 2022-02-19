@@ -18,6 +18,7 @@ IDE   : SEGGER Embedded Studio
 #include "queue.h"
 #include "semphr.h"
 
+
 static void prvSetupHardware(void);
 void vClockTask( void *pvParameters );
 SemaphoreHandle_t xSemaphoreClockTask;
@@ -26,9 +27,8 @@ int main(void) {
 
 	// Hardware configuration
 	prvSetupHardware();
-         
-	// Creating tasks
-	 assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL ) == pdPASS); // assert create task control
+       	// Creating tasks
+	 assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL) == pdPASS); // assert create task control
         
 	// Start the scheduler
 	vTaskStartScheduler(); // should never return
