@@ -132,29 +132,6 @@
         <file file_name="mcp79410_interface.h" />
       </folder>
     </folder>
-    <folder Name="SystemView">
-      <folder Name="Config">
-        <file file_name="SystemView/Config/Global.h" />
-        <file file_name="SystemView/Config/SEGGER_RTT_Conf.h" />
-        <file file_name="SystemView/Config/SEGGER_SYSVIEW_Conf.h" />
-        <file file_name="SystemView/Config/SEGGER_SYSVIEW_Config_FreeRTOS.c" />
-      </folder>
-      <folder Name="Sample">
-        <folder Name="OS">
-          <file file_name="SystemView/Sample/OS/SEGGER_SYSVIEW_FreeRTOS.c" />
-          <file file_name="SystemView/Sample/OS/SEGGER_SYSVIEW_FreeRTOS.h" />
-        </folder>
-      </folder>
-      <folder Name="SEGGER">
-        <file file_name="SystemView/SEGGER/SEGGER.h" />
-        <file file_name="SystemView/SEGGER/SEGGER_RTT.c" />
-        <file file_name="SystemView/SEGGER/SEGGER_RTT.h" />
-        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW.c" />
-        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW.h" />
-        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW_ConfDefaults.h" />
-        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW_Int.h" />
-      </folder>
-    </folder>
     <configuration Name="Debug" c_user_include_directories="." />
   </project>
   <configuration
