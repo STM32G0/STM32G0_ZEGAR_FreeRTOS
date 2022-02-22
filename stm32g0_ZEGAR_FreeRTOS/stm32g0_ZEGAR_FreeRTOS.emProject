@@ -115,51 +115,6 @@
         <file file_name="FreeRTOS/Source/timers.c" />
         <configuration Name="Debug" build_exclude_from_build="No" />
       </folder>
-      <folder Name="org">
-        <folder Name="Source">
-          <file file_name="FreeRTOS/Source/.gitmodules" />
-          <file file_name="FreeRTOS/Source/croutine.c" />
-          <file file_name="FreeRTOS/Source/event_groups.c" />
-          <folder Name="include">
-            <file file_name="FreeRTOS/Source/include/atomic.h" />
-            <file file_name="FreeRTOS/Source/include/croutine.h" />
-            <file file_name="FreeRTOS/Source/include/deprecated_definitions.h" />
-            <file file_name="FreeRTOS/Source/include/event_groups.h" />
-            <file file_name="FreeRTOS/Source/include/FreeRTOS.h" />
-            <file file_name="FreeRTOS/Source/include/list.h" />
-            <file file_name="FreeRTOS/Source/include/message_buffer.h" />
-            <file file_name="FreeRTOS/Source/include/mpu_prototypes.h" />
-            <file file_name="FreeRTOS/Source/include/mpu_wrappers.h" />
-            <file file_name="FreeRTOS/Source/include/portable.h" />
-            <file file_name="FreeRTOS/Source/include/projdefs.h" />
-            <file file_name="FreeRTOS/Source/include/queue.h" />
-            <file file_name="FreeRTOS/Source/include/semphr.h" />
-            <file file_name="FreeRTOS/Source/include/stack_macros.h" />
-            <file file_name="FreeRTOS/Source/include/StackMacros.h" />
-            <file file_name="FreeRTOS/Source/include/stdint.readme" />
-            <file file_name="FreeRTOS/Source/include/stream_buffer.h" />
-            <file file_name="FreeRTOS/Source/include/task.h" />
-            <file file_name="FreeRTOS/Source/include/timers.h" />
-          </folder>
-          <file file_name="FreeRTOS/Source/list.c" />
-          <folder Name="portable">
-            <folder Name="GCC">
-              <folder Name="ARM_CM0">
-                <file file_name="FreeRTOS/Source/portable/GCC/ARM_CM0/port.c" />
-                <file file_name="FreeRTOS/Source/portable/GCC/ARM_CM0/portmacro.h" />
-              </folder>
-            </folder>
-            <folder Name="MemMang">
-              <file file_name="FreeRTOS/Source/portable/MemMang/heap_4.c" />
-            </folder>
-          </folder>
-          <file file_name="FreeRTOS/Source/queue.c" />
-          <file file_name="FreeRTOS/Source/stream_buffer.c" />
-          <file file_name="FreeRTOS/Source/tasks.c" />
-          <file file_name="FreeRTOS/Source/timers.c" />
-        </folder>
-        <configuration Name="Debug" build_exclude_from_build="Yes" />
-      </folder>
     </folder>
     <folder Name="Header Files">
       <file file_name="FreeRTOSConfig.h" />
@@ -172,17 +127,40 @@
         <file file_name="system_config.h" />
         <file file_name="timer_config.h" />
       </folder>
-      <file file_name="delay.h" />
       <file file_name="mcp79410.h" />
       <folder Name="Interface">
         <file file_name="mcp79410_interface.h" />
       </folder>
     </folder>
+    <folder Name="SystemView">
+      <folder Name="Config">
+        <file file_name="SystemView/Config/Global.h" />
+        <file file_name="SystemView/Config/SEGGER_RTT_Conf.h" />
+        <file file_name="SystemView/Config/SEGGER_SYSVIEW_Conf.h" />
+        <file file_name="SystemView/Config/SEGGER_SYSVIEW_Config_FreeRTOS.c" />
+      </folder>
+      <folder Name="Sample">
+        <folder Name="OS">
+          <file file_name="SystemView/Sample/OS/SEGGER_SYSVIEW_FreeRTOS.c" />
+          <file file_name="SystemView/Sample/OS/SEGGER_SYSVIEW_FreeRTOS.h" />
+        </folder>
+      </folder>
+      <folder Name="SEGGER">
+        <file file_name="SystemView/SEGGER/SEGGER.h" />
+        <file file_name="SystemView/SEGGER/SEGGER_RTT.c" />
+        <file file_name="SystemView/SEGGER/SEGGER_RTT.h" />
+        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW.c" />
+        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW.h" />
+        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW_ConfDefaults.h" />
+        <file file_name="SystemView/SEGGER/SEGGER_SYSVIEW_Int.h" />
+      </folder>
+    </folder>
+    <configuration Name="Debug" c_user_include_directories="." />
   </project>
   <configuration
     Name="Debug"
     c_preprocessor_definitions="DEBUG"
-    c_user_include_directories=".;$(ProjectDir)/FreeRTOS/Source/include;$(ProjectDir)/FreeRTOS/Source/portable/GCC/ARM_CM0"
+    c_user_include_directories=".;$(ProjectDir)/FreeRTOS/Source/include;$(ProjectDir)/FreeRTOS/Source/portable/GCC/ARM_CM0;$(ProjectDir)/SystemView/Config;$(ProjectDir)/SystemView/Sample/OS;$(ProjectDir)/SystemView/SEGGER"
     gcc_debugging_level="Level 3"
     gcc_optimization_level="None" />
   <configuration

@@ -17,6 +17,7 @@ IDE   : SEGGER Embedded Studio
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+#include "SEGGER_SYSVIEW.h"
 
 
 static void prvSetupHardware(void);
@@ -27,6 +28,10 @@ int main(void) {
 
 	// Hardware configuration
 	prvSetupHardware();
+        // System View
+        SEGGER_SYSVIEW_Conf(); /* Configure and initialize SystemView */
+        SEGGER_SYSVIEW_Start() ;
+
        	// Creating tasks
 	 assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL) == pdPASS); // assert create task control
         
@@ -81,6 +86,7 @@ xSemaphoreGiveFromISR( xSemaphoreClockTask, &xHigherPriorityTaskWoken );
     port specific. */
 portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
+ 
 }
 
  
