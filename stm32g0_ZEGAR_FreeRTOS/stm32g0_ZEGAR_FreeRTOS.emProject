@@ -58,10 +58,12 @@
         <file file_name="spi_config.c" />
         <file file_name="system_config.c" />
         <file file_name="timer_config.c" />
+        <file file_name="max7219.c" />
       </folder>
       <file file_name="mcp79410.c" />
       <folder Name="Interface">
         <file file_name="mcp79410_interface.c" />
+        <file file_name="max7219_interface.c" />
       </folder>
     </folder>
     <folder Name="System Files">
@@ -130,14 +132,17 @@
       <file file_name="mcp79410.h" />
       <folder Name="Interface">
         <file file_name="mcp79410_interface.h" />
+        <file file_name="max7219_interface.h" />
       </folder>
+      <file file_name="max7219.h" />
     </folder>
     <configuration Name="Debug" c_user_include_directories="." />
   </project>
   <configuration
     Name="Debug"
     c_preprocessor_definitions="DEBUG"
-    c_user_include_directories=".;$(ProjectDir)/FreeRTOS/Source/include;$(ProjectDir)/FreeRTOS/Source/portable/GCC/ARM_CM0;$(ProjectDir)/SystemView/Config;$(ProjectDir)/SystemView/Sample/OS;$(ProjectDir)/SystemView/SEGGER"
+    c_user_include_directories=".;$(ProjectDir)/FreeRTOS/Source/include;$(ProjectDir)/FreeRTOS/Source/portable/GCC/ARM_CM0"
+    debug_target_connection="J-Link"
     gcc_debugging_level="Level 3"
     gcc_optimization_level="None" />
   <configuration
