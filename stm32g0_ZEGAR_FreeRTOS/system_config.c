@@ -20,7 +20,7 @@ CLOCK_MANAGER_Initialize();
 PIN_MANAGER_Initialize();
 I2C1_MANAGER_Initialize();
 //I2C2_MANAGER_Initialize();
-//SPI1_MANAGER_Initialize();
+SPI1_MANAGER_Initialize();
 //SPI2_MANAGER_Initialize();
 //TIMER6_MANAGER_Initialize();
 INTERRUPT_MANAGER_Initialize();

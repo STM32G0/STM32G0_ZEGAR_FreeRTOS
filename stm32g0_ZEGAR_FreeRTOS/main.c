@@ -35,6 +35,7 @@ int main(void) {
         
        	// Creating tasks
 	 assert( xTaskCreate( vClockTask, "ClockTask", 128, NULL, 4 , NULL) == pdPASS); // assert create task control
+         assert( xTaskCreate( vDisplayTask, "DisplayTask", 128, NULL, 4 , NULL) == pdPASS); // assert create task control
         
 	// Start the scheduler
 	vTaskStartScheduler(); // should never return
@@ -70,13 +71,10 @@ uint8_t SEC;
     assert(xSemaphoreClockTask != NULL); // assert create semaphore control
     
 	for (;;) {
-	/* See if we can obtain the semaphore.  If the semaphore is not
-        available wait 10 ticks to see if it becomes free. */
+	
         if( xSemaphoreTake( xSemaphoreClockTask, portMAX_DELAY == pdTRUE ))
         {
-            /* We were able to obtain the semaphore and can now access the
-            shared resource. */
-            
+                      
             #ifdef debug   
             printf("Hello vClockTask\n"); 
             #endif
@@ -85,12 +83,41 @@ uint8_t SEC;
             mcp79410_time.SEC = mcp79410.getTime_SEC(); 
             mcp79410_time.MIN = mcp79410.getTime_MIN();   
             mcp79410_time.HOUR = mcp79410.getTime_HOUR();
+            taskYIELD();
                                        
         }
         
 		
 	}
+	
+}
 
+
+void vDisplayTask(void *pvParameters) {
+
+struct mcp79410_time {
+uint8_t HOUR;
+uint8_t MIN; 
+uint8_t SEC;
+} mcp79410_time={0,0,0} ;
+
+    
+	for (;;) {
+	
+                        
+            #ifdef debug   
+            printf("Hello vDisplayTask\n"); 
+            #endif
+            
+            LED1_Toggle();
+            mcp79410_time.SEC = mcp79410.getTime_SEC(); 
+            mcp79410_time.MIN = mcp79410.getTime_MIN();   
+            mcp79410_time.HOUR = mcp79410.getTime_HOUR();
+            taskYIELD();
+                                       
+             
+		
+	}
 	
 }
 
