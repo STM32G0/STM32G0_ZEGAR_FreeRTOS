@@ -63,9 +63,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="mcp79410_time.HOUR" name="mcp79410_time.HOUR" radix="10" linenumber="86" filename="main.c"/>
-   <Watchpoint expression=" mcp79410_time.MIN" name=" mcp79410_time.MIN" radix="10" linenumber="87" filename="main.c"/>
-   <Watchpoint expression="mcp79410_time.SEC" name="mcp79410_time.SEC" radix="10" linenumber="88" filename="main.c"/>
+   <Watchpoint expression="mcp79410_time.HOUR" name="mcp79410_time.HOUR" radix="10" linenumber="95" filename="main.c"/>
+   <Watchpoint expression=" mcp79410_time.MIN" name=" mcp79410_time.MIN" radix="10" linenumber="96" filename="main.c"/>
+   <Watchpoint expression="mcp79410_time.SEC" name="mcp79410_time.SEC" radix="10" linenumber="96" filename="main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -78,7 +78,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="76" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="84" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="98" y="124" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="91" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="6" y="61" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.c" selected="0" top="33" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="59" y="67" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="pin_config.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="9" y="8" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="max7219_interface.h" selected="0" top="0" codecName="Default"/>

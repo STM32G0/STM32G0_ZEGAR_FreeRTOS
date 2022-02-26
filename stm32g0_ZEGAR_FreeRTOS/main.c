@@ -27,6 +27,8 @@ void vClockTask( void *pvParameters );
 void vDisplayTask( void *pvParameters );
 /**** SEMAPHORE pointer ****/
 SemaphoreHandle_t xSemaphoreClockTask = NULL;
+/**** QUEUE pointer ****/
+QueueHandle_t xQueueClockTask = NULL ;
 
 int main(void) {
 
@@ -66,6 +68,10 @@ uint8_t MIN;
 uint8_t SEC;
 } mcp79410_time={0,0,0} ;
 
+/* Attempt to create a queue. */
+xQueueClockTask = xQueueCreate( 2, sizeof( mcp79410_time ) );
+assert(xQueueClockTask != NULL); // assert create queue control
+
 /* Attempt to create a semaphore. */
     xSemaphoreClockTask = xSemaphoreCreateBinary();
     assert(xSemaphoreClockTask != NULL); // assert create semaphore control
@@ -83,11 +89,12 @@ uint8_t SEC;
             mcp79410_time.SEC = mcp79410.getTime_SEC(); 
             mcp79410_time.MIN = mcp79410.getTime_MIN();   
             mcp79410_time.HOUR = mcp79410.getTime_HOUR();
-            taskYIELD();
-                                       
+            if( xQueueClockTask != NULL ){
+            xQueueSend( xQueueClockTask, ( void * ) &mcp79410_time, ( TickType_t ) 0 );
+            }
+                                                   
         }
-        
-		
+  		
 	}
 	
 }
@@ -109,17 +116,21 @@ uint8_t SEC;
             printf("Hello vDisplayTask\n"); 
             #endif
             
-            LED1_Toggle();
-            mcp79410_time.SEC = mcp79410.getTime_SEC(); 
-            mcp79410_time.MIN = mcp79410.getTime_MIN();   
-            mcp79410_time.HOUR = mcp79410.getTime_HOUR();
-            taskYIELD();
-                                       
-             
+           LED1_Toggle();
+         
+           if(xQueueReceive( xQueueClockTask, & mcp79410_time, ( TickType_t ) 10 ) == pdPASS ){
+                /* mcp79410_time now contains a copy of xMessage. */
+                              
+                /* display minutes*/
+                max7219.SendToDevice(Device0, MAX7219_DIGIT0, (mcp79410_time.MIN & 0x0F)) ;       // wyswietl cyfre jednosci
+                max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((mcp79410_time.MIN >> 4)& 0x0F)) ; // wyswietl cyfre dziesiatki
+      }
+   }                  
+      
 		
-	}
-	
 }
+	
+
 
 /*signal on PB5 pin generate IRQ*/
 void EXTI4_15_IRQHandler(void){
