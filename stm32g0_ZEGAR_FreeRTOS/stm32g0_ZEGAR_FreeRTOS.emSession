@@ -86,8 +86,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="71" y="39" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="38" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="56" y="211" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="STM32G0xx/Source/STM32G0xx_Startup.s" selected="0" top="215" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="121" y="39" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="56" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>
