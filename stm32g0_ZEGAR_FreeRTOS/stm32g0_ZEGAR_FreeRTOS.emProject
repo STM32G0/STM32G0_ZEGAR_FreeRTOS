@@ -58,13 +58,13 @@
         <file file_name="spi_config.c" />
         <file file_name="system_config.c" />
         <file file_name="timer_config.c" />
-        <file file_name="max7219.c" />
       </folder>
       <file file_name="mcp79410.c" />
       <folder Name="Interface">
         <file file_name="mcp79410_interface.c" />
         <file file_name="max7219_interface.c" />
       </folder>
+      <file file_name="max7219.c" />
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />

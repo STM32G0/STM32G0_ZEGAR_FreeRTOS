@@ -8,7 +8,7 @@ IDE   : SEGGER Embedded Studio
  #include "mcp79410.h"
  #include "i2c_config.h"
 
-extern uint8_t err_flg  ;   // the error flag will be used in this file 
+//extern uint8_t err_flg  ;   // the error flag will be used in this file 
 //..............................................................................
 // The below function writes a data byte in the I2C RTCC
 //..............................................................................
@@ -98,31 +98,3 @@ sec = ((((sec&0x7F) >> 4) & 0x0F) * 10) + (sec & 0x0F); /*konwersja liczby BCD n
 return sec;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-//..............................................................................
-// The below function initializes the time/date variables, only if the oscillator is not yet running
-void ini_i2c_time(void){             // initialization of time/date vars on the I2C RTCC
-uint8_t day=0;                       // local variable (stores the RTCC DAY register) 
-day = i2c_rtcc_rd(ADDR_DAY);         // read day + OSCON bit 
-if((day&OSCON)==OSCON) ;             // if oscillator = already running, do nothing. 
-else{                                // if oscillator = not running, set time/date(arbitrary)
-i2c_rtcc_wr(ADDR_YEAR,0x21);         // initialize YEAR  register : (20)17           
-i2c_rtcc_wr(ADDR_MNTH,0x5);          // initialize MONTH register : maj  
-i2c_rtcc_wr(ADDR_DATE,0x22);         // initialize DATE  register : date = 28  
-i2c_rtcc_wr(ADDR_HOUR,0x00);         // initialize HOUR  register : hour = 00  
-i2c_rtcc_wr(ADDR_MIN,0x00) ;         // initialize MIN   register : min  = 00  
-i2c_rtcc_wr(ADDR_SEC,START_32KHZ);}  // init SEC register and start the 32khz oscillator .
-} 
-
-*/
