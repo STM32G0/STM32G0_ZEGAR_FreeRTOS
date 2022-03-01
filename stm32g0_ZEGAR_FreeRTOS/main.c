@@ -110,20 +110,33 @@ uint8_t HOUR;
 uint8_t MIN; 
 uint8_t SEC;
 } MCP79410_Time_DisplayTask={0,0,0} ;
-
+uint8_t kropka_flags = 1 ;
     
 	for (;;) {
 	    
-           LED1_Toggle();
-         
+                    
            if(xQueueReceive( xQueueClockTask, & MCP79410_Time_DisplayTask, portMAX_DELAY) == pdPASS ){
                 /* mcp79410_time now contains a copy of MCP79410_Time_DisplayTask  . */
                 #ifdef debug   
                 printf("Hello vDisplayTask\n"); 
                 #endif             
+                LED1_Toggle();
+
                 /* display minutes*/
                 max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F)) ;       // wyswietl cyfre jednosci
                 max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((MCP79410_Time_DisplayTask.MIN >> 4)& 0x0F)) ; // wyswietl cyfre dziesiatki
+              
+                /* display hour*/
+                if(kropka_flags){
+                    max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F)|kropka) ;   // wyswietl cyfre jednosci plus kropka
+                    kropka_flags = 0;
+                }
+                else {
+                    max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F)) ;   // wyswietl cyfre jednosci bez kropki
+                    kropka_flags = 1;
+                }
+                max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((MCP79410_Time_DisplayTask.HOUR >> 4)& 0x0F)) ; // wyswietl cyfre dziesiatki
+                
       }
    }                  
       

@@ -9,6 +9,15 @@ IDE   : SEGGER Embedded Studio
  #include "i2c_config.h"
 
 //extern uint8_t err_flg  ;   // the error flag will be used in this file 
+// konwersja liczby DEC na BCD
+uint8_t dec2bcd(uint8_t dec) {
+    return ((dec / 10)<<4) | (dec % 10);
+}
+
+// konwersja liczby BCD na DEC
+uint8_t bcd2dec(uint8_t bcd) {
+    return ((((bcd) >> 4) & 0x0F) * 10) + ((bcd) & 0x0F);
+    }
 //..............................................................................
 // The below function writes a data byte in the I2C RTCC
 //..............................................................................
@@ -44,12 +53,14 @@ i2c_rtcc_wr(ADDR_CTRL,0xC0);         // square wave on MFP, no alarms, MFP = 1Hz
 day = i2c_rtcc_rd(ADDR_DAY);
 i2c_rtcc_wr(ADDR_DAY,day | VBATEN);  // enable the battery back-up
 /*Set Time*/
-i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
-i2c_rtcc_wr(ADDR_MNTH,0x01);         // initialize MONTH register : styczeñ  
-i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date = 16  
-i2c_rtcc_wr(ADDR_HOUR,0x00);         // initialize HOUR  register : hour = 00  
-i2c_rtcc_wr(ADDR_MIN,0x00) ;         // initialize MIN   register : min  = 00  
-i2c_rtcc_wr(ADDR_SEC,START_32KHZ);   // init SEC register and start the 32khz oscillator .
+/* nie uzywamy YEAR, MNTH , DATE i nie ustawiac tego !!! */
+//i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
+//i2c_rtcc_wr(ADDR_MNTH,0x02);         // initialize MONTH register : luty 
+//i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date =  
+/* ustawiamy HOUR , MIN i zerujemy sekundy */
+i2c_rtcc_wr(ADDR_HOUR,dec2bcd(13));    // initialize HOUR  register : hour = 13  
+i2c_rtcc_wr(ADDR_MIN,dec2bcd(34));     // initialize MIN   register : min  = 34  
+i2c_rtcc_wr(ADDR_SEC,START_32KHZ);     // init SEC register and start the 32khz oscillator SEC = 00 + ST bit = 1
 }   
 
 
@@ -66,35 +77,30 @@ return yr;
 uint8_t get_MONTH(void) { 
 uint8_t mon = 0;  
 mon = i2c_rtcc_rd(ADDR_MNTH)  ;  /*read MONTH*/ 
-mon = ((((mon&0x1F) >> 4) & 0x0F) * 10) + (mon & 0x0F); /*konwersja liczby BCD na dziesietna + maska dla leap year*/
 return mon;
 }
 
 uint8_t get_DAY(void) {   
 uint8_t day = 0;
 day = i2c_rtcc_rd(ADDR_DATE)  ;  /*read DATE*/ 
-day = ((((day&0x3F) >> 4) & 0x0F) * 10) + (day & 0x0F); /*konwersja liczby BCD na dziesietna*/
 return day;
 }
 
 uint8_t get_HOUR(void) {
 uint8_t hr = 0;       
 hr  = i2c_rtcc_rd(ADDR_HOUR)  ;  /*read HOUR*/
-hr = ((((hr&0x3F) >> 4) & 0x0F) * 10) + (hr & 0x0F); /*konwersja liczby BCD na dziesietna + maska dla 12 hours format*/
 return  hr ;
 }
 
 uint8_t get_MIN(void) {   
 uint8_t min = 0;   
 min = i2c_rtcc_rd(ADDR_MIN)   ;  /*read MIN*/
-min = (((min >> 4) & 0x0F) * 10) + (min & 0x0F); /*konwersja liczby BCD na dziesietna*/
 return min;
 } 
 
 uint8_t get_SEC(void) { 
 uint8_t sec = 0;   
 sec = i2c_rtcc_rd(ADDR_SEC)   ;  /*read SEC*/
-sec = ((((sec&0x7F) >> 4) & 0x0F) * 10) + (sec & 0x0F); /*konwersja liczby BCD na dziesietna + maska dla Start Oscilator*/
 return sec;
 }
 
