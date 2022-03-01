@@ -53,7 +53,7 @@ i2c_rtcc_wr(ADDR_CTRL,0xC0);         // square wave on MFP, no alarms, MFP = 1Hz
 day = i2c_rtcc_rd(ADDR_DAY);
 i2c_rtcc_wr(ADDR_DAY,day | VBATEN);  // enable the battery back-up
 /*Set Time*/
-/* nie uzywamy YEAR, MNTH , DATE i nie ustawiac tego !!! */
+/* nie uzywamy YEAR, MNTH , DATE i nie ustawiaæ tego !!! */
 //i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
 //i2c_rtcc_wr(ADDR_MNTH,0x02);         // initialize MONTH register : luty 
 //i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date =  
