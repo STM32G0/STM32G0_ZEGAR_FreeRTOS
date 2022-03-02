@@ -30,6 +30,12 @@ SemaphoreHandle_t xSemaphoreClockTask = NULL;
 /**** QUEUE pointer ****/
 QueueHandle_t xQueueClockTask = NULL ;
 
+typedef struct {
+uint8_t HOUR;
+uint8_t MIN; 
+uint8_t SEC;
+} time_t ;
+
 int main(void) {
 
 	// Hardware configuration
@@ -62,11 +68,7 @@ static void prvSetupHardware(void)
 
 void vClockTask(void *pvParameters) {
 
-struct {
-uint8_t HOUR;
-uint8_t MIN; 
-uint8_t SEC;
-} MCP79410_Time_ClockTask={0,0,0} ;
+time_t MCP79410_Time_ClockTask={0,0,0} ;
 
 /* Attempt to create a queue. */
     xQueueClockTask = xQueueCreate( 2, sizeof( MCP79410_Time_ClockTask ) );
@@ -105,12 +107,8 @@ uint8_t SEC;
 
 void vDisplayTask(void *pvParameters) {
 
-struct {
-uint8_t HOUR;
-uint8_t MIN; 
-uint8_t SEC;
-} MCP79410_Time_DisplayTask={0,0,0} ;
-uint8_t kropka_flags = 1 ;
+time_t MCP79410_Time_DisplayTask={0,0,0} ;
+uint8_t kropka_flags = 1 ; // clock Heart Beat 
     
 	for (;;) {
 	    
