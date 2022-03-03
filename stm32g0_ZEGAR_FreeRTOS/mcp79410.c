@@ -70,7 +70,6 @@ i2c_rtcc_wr(ADDR_SEC,START_32KHZ);     // init SEC register and start the 32khz 
 uint8_t get_YEAR(void) {
 uint8_t yr = 0;   
 yr  = i2c_rtcc_rd(ADDR_YEAR)  ;  /*read YEAR*/        
-yr = (((yr >> 4) & 0x0F) * 10) + (yr & 0x0F); /*konwersja liczby BCD na dziesietna*/   
 return yr;           
 }
     
