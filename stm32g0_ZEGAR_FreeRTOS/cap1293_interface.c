@@ -14,6 +14,6 @@ const cap1293_interface_t cap1293 = {
 
 .WriteRegister = i2c_cap1293_wr,
 .ReadRegister = i2c_cap1293_rd,
-.Init = i2c_cap1293_rd, 
+.Init = i2c_cap1293_ini, 
 
 };

@@ -37,7 +37,7 @@ asm("nop");
 /*For MCP79410 and CAP1293*/
 uint8_t I2C1_Read(uint8_t slaveAdress, uint8_t registerAdress){
 /* ochrona I2C1 za pomoc¹ Mutex */
-if (xSemaphoreTake(xMutexI2CGuard, portMAX_DELAY) == pdTRUE) { // pobierz token mutex jeœli nie wziêty
+//if (xSemaphoreTake(xMutexI2CGuard, portMAX_DELAY) == pdTRUE) { // pobierz token mutex jeœli nie wziêty
 
 uint8_t data ;
 
@@ -69,19 +69,15 @@ I2C1->ICR |= I2C_ICR_STOPCF ; //clear flag for STOP event
 printf("data %d!\n", data);
 #endif
 
-xSemaphoreGive(xMutexI2CGuard); //oddaj token mutex
+//xSemaphoreGive(xMutexI2CGuard); //oddaj token mutex
 
 return data ; 
-}
+//}
 }
 
 
 /*For MCP79410 and CAP1293 */
 void I2C1_Write(uint8_t slaveAdress, uint8_t registerAdress, uint8_t data){
-
-if( xSemaphoreTake( xMutexI2CGuard, portMAX_DELAY ) == pdTRUE ){
-
-}
 
 while(I2C1->ISR & I2C_ISR_BUSY); //wait for I2C not busy
 

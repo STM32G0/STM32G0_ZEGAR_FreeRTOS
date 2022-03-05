@@ -14,6 +14,7 @@ IDE   : SEGGER Embedded Studio
 #include "system_config.h"
 #include "mcp79410_interface.h"
 #include "max7219_interface.h"
+#include "cap1293_interface.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -77,12 +78,14 @@ static void prvSetupHardware(void) {
   mcp79410.InitRTCC();
   max7219.InitAllDevice();
   max7219.ClearAllDevice();
+  cap1293.Init();
+  
 }
 
 void vClockTask(void *pvParameters) {
 
   time_t MCP79410_Time_ClockTask = {0, 0, 0};
-
+    
   for (;;) {
 
     if (xSemaphoreTake(xSemaphoreClockTask, portMAX_DELAY) == pdTRUE) {
@@ -91,7 +94,7 @@ void vClockTask(void *pvParameters) {
       printf("Hello vClockTask\n");
 #endif
 
-      LED2_Toggle();
+     // LED2_Toggle();
       /* sekcja krytyczna start ??? */
       MCP79410_Time_ClockTask.SEC = mcp79410.getTime_SEC();
       MCP79410_Time_ClockTask.MIN = mcp79410.getTime_MIN();
@@ -116,7 +119,7 @@ void vDisplayTask(void *pvParameters) {
 #ifdef debug
       printf("Hello vDisplayTask\n");
 #endif
-      LED1_Toggle();
+    // LED1_Toggle();
 
       /* display minutes*/
       max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F));        // wyswietl cyfre jednosci
@@ -149,12 +152,14 @@ void EXTI4_15_IRQHandler(void) {
   }
 
   /* Inerrupt from CAP1293 ALERT - PB4 ? */
+  
   if (EXTI->FPR1 & EXTI_FPR1_FPIF4) {
     EXTI->FPR1 |= EXTI_FPR1_FPIF4; // clear pending
     // if(cap1293.read(CAP1296_SENSTATUS) == 1) GPIOA->ODR |= GPIO_ODR_OD8 ;  //dotyk pierwszego pola wykryty LED ON
     // if(cap1293.read(CAP1296_SENSTATUS) == 2) GPIOA->ODR &= ~GPIO_ODR_OD8 ; //dotyk drugiego pola wykryty LED OFF
-
-    // cap1293.write(CAP1296_MAIN, (cap1293.read(CAP1296_MAIN) & ~CAP1296_MAIN_INT)); //clear main interrupt
+    LED2_Toggle();
+    cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); //clear main interrupt
   }
+  
 }
  
