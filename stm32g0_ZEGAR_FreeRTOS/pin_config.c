@@ -82,6 +82,25 @@ GPIOA->MODER &= ~GPIO_MODER_MODE2_0;
 GPIOA->OSPEEDR |= (GPIO_OSPEEDR_OSPEED1_0 | GPIO_OSPEEDR_OSPEED2_0) ;
 /*GPIO alternate function low register (GPIOA_AFRL for AFSEL1 and AFSEL2 set default 0b0000)*/
 
+/********** PA3 set Out for CS MAX7219 **********************/
+GPIOA->MODER &= ~GPIO_MODER_MODE3_1; //MODE3 -> 0b01
 
+/********* CAP1293 for pin ALERT *********/
+/********** PB4 set for EXTI ************/
+/*set Input (0b00)*/
+GPIOB->MODER &= ~(GPIO_MODER_MODE4_0 | GPIO_MODER_MODE4_1); 
+/*set low speed (0b01)*/
+GPIOB->OSPEEDR |= GPIO_OSPEEDR_OSPEED4_0 ;
+GPIOB->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED4_1 ;
+/*set Pull-Up (0b01)*/
+GPIOB->PUPDR |= GPIO_PUPDR_PUPD4_0 ;
+GPIOB->PUPDR &= ~GPIO_PUPDR_PUPD4_1;
+/*set EXTI for PB4*/
+EXTI->EXTICR[1] |= EXTI_EXTICR2_EXTI4_0 ; // Port PB - 0x01
+/*set EXTI Falling triger for PB4*/
+EXTI->FTSR1 |= EXTI_FTSR1_FT4 ;
+/*set EXTI Interrupt no-masked for PB4*/
+EXTI->IMR1 |= EXTI_IMR1_IM4 ;
 
 }
+

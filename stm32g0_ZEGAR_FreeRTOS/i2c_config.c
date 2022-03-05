@@ -10,9 +10,15 @@ IDE   : SEGGER Embedded Studio
 
 
 #include <stm32g071xx.h>
+#include <assert.h>
 #include "i2c_config.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 //#define debug
+
+SemaphoreHandle_t xMutexI2CGuard  = NULL ;
 
 void I2C1_MANAGER_Initialize(void){
 
@@ -28,8 +34,10 @@ I2C1->CR1 |= I2C_CR1_PE ; //I2C2 ON
 asm("nop");
 }
 
-/*For MCP79410*/
+/*For MCP79410 and CAP1293*/
 uint8_t I2C1_Read(uint8_t slaveAdress, uint8_t registerAdress){
+/* ochrona I2C1 za pomoc¹ Mutex */
+if (xSemaphoreTake(xMutexI2CGuard, portMAX_DELAY) == pdTRUE) { // pobierz token mutex jeœli nie wziêty
 
 uint8_t data ;
 
@@ -61,14 +69,19 @@ I2C1->ICR |= I2C_ICR_STOPCF ; //clear flag for STOP event
 printf("data %d!\n", data);
 #endif
 
-return data ; 
+xSemaphoreGive(xMutexI2CGuard); //oddaj token mutex
 
+return data ; 
+}
 }
 
 
-
-/*For MCP79410*/
+/*For MCP79410 and CAP1293 */
 void I2C1_Write(uint8_t slaveAdress, uint8_t registerAdress, uint8_t data){
+
+if( xSemaphoreTake( xMutexI2CGuard, portMAX_DELAY ) == pdTRUE ){
+
+}
 
 while(I2C1->ISR & I2C_ISR_BUSY); //wait for I2C not busy
 
@@ -90,4 +103,6 @@ I2C1->TXDR = (uint32_t)data ; //write to buf TXDR , registerAdress
 while(!(I2C1->ISR & I2C_ISR_STOPF)); //wait for STOP complete STOPF = 1
 
 I2C1->ICR |= I2C_ICR_STOPCF ; //clear flag for STOP event
+
+
 }

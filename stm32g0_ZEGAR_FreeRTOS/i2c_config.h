@@ -7,6 +7,11 @@ IDE   : SEGGER Embedded Studio
 
 #ifndef I2C_CONFIG_H
 #define  I2C_CONFIG_H
+#include <stm32g071xx.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 
 
 void I2C1_MANAGER_Initialize(void);
