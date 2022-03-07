@@ -35,6 +35,5 @@ uint8_t i2c_cap1293_rd(uint8_t registerAdress) { // read a data byte from the I2
 void i2c_cap1293_ini(void) { // initialization of the I2C RTCC:
 
   i2c_cap1293_wr(CAP1293_INTENABLE, 0x07); //Enable interrupt on CS1,CS2,CS3
-  i2c_cap1293_wr(CAP1293_CALIBRATE, 0x07);
   i2c_cap1293_wr(CAP1293_MAIN, (i2c_cap1293_rd(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt
 }

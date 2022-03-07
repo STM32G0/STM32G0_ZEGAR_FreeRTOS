@@ -54,9 +54,9 @@ void max7219_init(void) {
 
 void max7219_clear(void) {
   uint8_t i, j;
-  for (i = 0; i < MAX7219_DEVICES; i++) {
+  for (i = 0; i < (MAX7219_DEVICES); i++) {
     for (j = 0; j < 8; j++) {
-      if ((MAX7219_USE_BCD_DECODE & (1 << i))) {
+      if ((MAX7219_USE_BCD_DECODE & (1 << j))) {
         max7219_SendToDevice(i, j, 0xF);
       } else {
         max7219_SendToDevice(i, j, 0);

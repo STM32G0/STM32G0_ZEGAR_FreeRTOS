@@ -21,16 +21,15 @@ IDE   : SEGGER Embedded Studio
 #include "semphr.h"
 #define debug
 
-
 static void prvSetupHardware(void);
 /**** TASK pointer ****/
-void vClockTask( void *pvParameters );
-void vDisplayTask( void *pvParameters );
+void vClockTask(void *pvParameters);
+void vDisplayTask(void *pvParameters);
 /**** SEMAPHORE/MUTEX pointer ****/
 SemaphoreHandle_t xSemaphoreClockTask = NULL;
-extern SemaphoreHandle_t xMutexI2CGuard ; // aby wskaŸnik by³ widoczny w pliku obs³ugi I2C        
+extern SemaphoreHandle_t xMutexI2CGuard; // aby wskaŸnik by³ widoczny w pliku obs³ugi I2C
 /**** QUEUE pointer ****/
-QueueHandle_t xQueueClockTask = NULL ;
+QueueHandle_t xQueueClockTask = NULL;
 
 typedef struct {
   uint8_t HOUR;
@@ -51,11 +50,11 @@ int main(void) {
   xSemaphoreClockTask = xSemaphoreCreateBinary();
   assert(xSemaphoreClockTask != NULL); // assert create semaphore control
   xSemaphoreGive(xSemaphoreClockTask); // load the semaphore with a token
-  
+
   /* Attempt to create a mutex. */
   xMutexI2CGuard = xSemaphoreCreateMutex();
   assert(xMutexI2CGuard != NULL); // assert create mutex control
-  
+
   /* Attempt to create a queue. */
   xQueueClockTask = xQueueCreate(2, sizeof(time_t));
   assert(xQueueClockTask != NULL); // assert create queue control
@@ -74,18 +73,21 @@ int main(void) {
 static void prvSetupHardware(void) {
   // It's place to hardware configuration
   SystemInit();
+  /* zw³oka na ustabilizowanie siê zegarów / koniecznie musi byæ */
+  for (uint32_t i = 0; i < 5000; i++) {
+    asm("nop");
+  }
   SYSTEM_MANAGER_Initialize();
   mcp79410.InitRTCC();
   max7219.InitAllDevice();
   max7219.ClearAllDevice();
   cap1293.Init();
-  
 }
 
 void vClockTask(void *pvParameters) {
 
   time_t MCP79410_Time_ClockTask = {0, 0, 0};
-    
+
   for (;;) {
 
     if (xSemaphoreTake(xSemaphoreClockTask, portMAX_DELAY) == pdTRUE) {
@@ -94,7 +96,7 @@ void vClockTask(void *pvParameters) {
       printf("Hello vClockTask\n");
 #endif
 
-     // LED2_Toggle();
+      // LED2_Toggle();
       /* sekcja krytyczna start ??? */
       MCP79410_Time_ClockTask.SEC = mcp79410.getTime_SEC();
       MCP79410_Time_ClockTask.MIN = mcp79410.getTime_MIN();
@@ -119,7 +121,7 @@ void vDisplayTask(void *pvParameters) {
 #ifdef debug
       printf("Hello vDisplayTask\n");
 #endif
-    // LED1_Toggle();
+      // LED1_Toggle();
 
       /* display minutes*/
       max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F));        // wyswietl cyfre jednosci
@@ -152,14 +154,12 @@ void EXTI4_15_IRQHandler(void) {
   }
 
   /* Inerrupt from CAP1293 ALERT - PB4 ? */
-  
+
   if (EXTI->FPR1 & EXTI_FPR1_FPIF4) {
     EXTI->FPR1 |= EXTI_FPR1_FPIF4; // clear pending
     // if(cap1293.read(CAP1296_SENSTATUS) == 1) GPIOA->ODR |= GPIO_ODR_OD8 ;  //dotyk pierwszego pola wykryty LED ON
     // if(cap1293.read(CAP1296_SENSTATUS) == 2) GPIOA->ODR &= ~GPIO_ODR_OD8 ; //dotyk drugiego pola wykryty LED OFF
     LED2_Toggle();
-    cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); //clear main interrupt
+    cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt
   }
-  
 }
- 

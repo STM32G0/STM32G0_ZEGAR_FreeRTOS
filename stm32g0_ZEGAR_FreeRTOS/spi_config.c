@@ -12,8 +12,11 @@ IDE   : SEGGER Embedded Studio
 void SPI1_MANAGER_Initialize(void){
 /*SPI1 disable*/
 SPI1->CR1 &= ~SPI_CR1_SPE ; 
-/* set prescaler FCY=16MHz / prescaler(8) = 2 MHz (0b010) */
-SPI1->CR1 |= SPI_CR1_BR_1 ;
+asm("nop");
+asm("nop");
+asm("nop");
+/* set prescaler FCY=16MHz / prescaler(4) = 4 MHz (0b001) */
+SPI1->CR1 |= SPI_CR1_BR_0 ;
 /* SET mode 0 (CPOL = 0 / CPHA = 0) to SPI1 */
 SPI1->CR1 &= ~SPI_CR1_CPOL ;
 SPI1->CR1 &= ~SPI_CR1_CPHA ;
@@ -27,6 +30,9 @@ SPI1->CR2 |= (SPI_CR2_DS_0 | SPI_CR2_DS_1 | SPI_CR2_DS_2) ;
 SPI1->CR2 |= SPI_CR2_FRXTH; // event is generated if the FIFO level is greater than or equal to 1/4 (8-bit)
 /*enable SPI*/
 SPI1->CR1 |= SPI_CR1_SPE ; //SPI1 enable
+asm("nop");
+asm("nop");
+asm("nop");
 
 }
 

@@ -24,6 +24,8 @@ void I2C1_MANAGER_Initialize(void){
 
 I2C1->CR1 &= ~I2C_CR1_PE ; //I2C2 OFF
 asm("nop");
+asm("nop");
+asm("nop");
 I2C1->CR1 |= I2C_CR1_ANFOFF ; //Analog filter ON
 I2C1->TIMINGR = 0x00303D5B ; //get from STM32Cube, FCY - 16MHz
 I2C1->CR1 |= I2C_CR1_TCIE; //Transfer Complete interrupt enable TCIE = 1
@@ -31,6 +33,8 @@ I2C1->CR1 |= I2C_CR1_TXIE; // Transmit (TXIS) interrupt enabled TXIE = 1
 I2C1->CR1 |= I2C_CR1_RXIE; // Receive (RXNE) interrupt enabled RXIE = 1
 I2C1->CR1 |= I2C_CR1_STOPIE; // STOP (STOPF) interrupt enabled STOPIE = 1
 I2C1->CR1 |= I2C_CR1_PE ; //I2C2 ON
+asm("nop");
+asm("nop");
 asm("nop");
 }
 

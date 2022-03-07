@@ -67,9 +67,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="mcp79410_time.HOUR" name="mcp79410_time.HOUR" radix="10" linenumber="109" filename="main.c"/>
-   <Watchpoint expression=" mcp79410_time.MIN" name=" mcp79410_time.MIN" radix="10" linenumber="110" filename="main.c"/>
-   <Watchpoint expression="mcp79410_time.SEC" name="mcp79410_time.SEC" radix="10" linenumber="110" filename="main.c"/>
+   <Watchpoint expression="mcp79410_time.HOUR" name="mcp79410_time.HOUR" radix="10" linenumber="114" filename="main.c"/>
+   <Watchpoint expression=" mcp79410_time.MIN" name=" mcp79410_time.MIN" radix="10" linenumber="115" filename="main.c"/>
+   <Watchpoint expression="mcp79410_time.SEC" name="mcp79410_time.SEC" radix="10" linenumber="115" filename="main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -82,14 +82,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="162" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="73" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="11" y="18" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="cap1293_interface.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="23" y="16" useTextEdit="1" openedFrom="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/main.c" useBinaryEdit="0" left="0" path="cap1293_interface.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="20" y="13" useTextEdit="1" openedFrom="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS/cap1293.c" useBinaryEdit="0" left="0" path="cap1293.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="37" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="cap1293.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="i2c_config.c" selected="0" top="66" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="176" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="STM32G0xx/CMSIS/Device/Source/system_stm32g0xx.c" selected="0" top="151" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="59" y="26" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="max7219.c" selected="0" top="4" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="54" y="149" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="main.c" selected="1" top="14" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>
