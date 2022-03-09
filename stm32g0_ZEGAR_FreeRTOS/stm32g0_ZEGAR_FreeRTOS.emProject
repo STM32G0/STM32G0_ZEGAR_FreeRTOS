@@ -67,6 +67,11 @@
       </folder>
       <file file_name="max7219.c" />
       <file file_name="cap1293.c" />
+      <folder Name="FreeRTOS APP Support">
+        <file file_name="TaskCreate.c" />
+        <file file_name="SemaphoreCreate.c" />
+        <file file_name="QueueCreate.c" />
+      </folder>
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />
@@ -139,6 +144,11 @@
       </folder>
       <file file_name="max7219.h" />
       <file file_name="cap1293.h" />
+      <folder Name="FreeRTOS APP Support">
+        <file file_name="TaskCreate.h" />
+        <file file_name="SemaphoreCreate.h" />
+        <file file_name="QueueCreate.h" />
+      </folder>
     </folder>
     <configuration Name="Debug" c_user_include_directories="." />
   </project>

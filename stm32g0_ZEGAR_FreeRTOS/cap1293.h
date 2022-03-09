@@ -91,6 +91,10 @@ void i2c_cap1293_ini(void);
 #define CAP1293_CONFIG1_MAXDUREN        0x08		//Enable Max duration recalibration
 #define CAP1293_CONFIG2_BCOUTRECAL      0x40		//Base count out-of-limit recalibration bit (default 1)	I THINK I SHOULD TURN THIS OFF FOR MOST USERS (BARE CONTACTS CAUSE OOL)
 #define CAP1293_CONFIG2_BLKPWRCONT      0x20		//Disable power control while sensing (default 0)
+#define CAP1293_CS1_DOWN                0x01
+#define CAP1293_CS2_UP                  0x02
+#define CAP1293_CS3_SELECT              0x04
+
 
 
 #endif

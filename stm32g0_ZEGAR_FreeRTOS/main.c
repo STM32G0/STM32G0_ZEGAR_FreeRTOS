@@ -19,64 +19,42 @@ IDE   : SEGGER Embedded Studio
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-#define debug
+#include "TaskCreate.h"
+#include "SemaphoreCreate.h"
+#include "QueueCreate.h"
+
+#define debug // Semihosting on/off
 
 static void prvSetupHardware(void);
-/**** TASK pointer ****/
-void vClockTask(void *pvParameters);
-void vDisplayTask(void *pvParameters);
-/**** SEMAPHORE/MUTEX pointer ****/
-SemaphoreHandle_t xSemaphoreClockTask = NULL;
-extern SemaphoreHandle_t xMutexI2CGuard; // aby wskaŸnik by³ widoczny w pliku obs³ugi I2C
-/**** QUEUE pointer ****/
-QueueHandle_t xQueueClockTask = NULL;
+volatile uint8_t touch_int_flag = 0 ;
+volatile uint8_t kropka_int_flag = 0 ;	
 
-typedef struct {
-  uint8_t HOUR;
-  uint8_t MIN;
-  uint8_t SEC;
-} time_t;
 
 int main(void) {
+  /* FreeRTOS APP support create */
+  TaskCreate();
+  SemaphoreCreate();
+  QueueCreate();
 
-  // Hardware configuration
+  /* Hardware configuration */
   prvSetupHardware();
 
-  // Creating tasks
-  assert(xTaskCreate(vClockTask, "ClockTask", 256, NULL, 4, NULL) == pdPASS);     // assert create task control
-  assert(xTaskCreate(vDisplayTask, "DisplayTask", 256, NULL, 3, NULL) == pdPASS); // assert create task control
-
-  /* Attempt to create a semaphore. */
-  xSemaphoreClockTask = xSemaphoreCreateBinary();
-  assert(xSemaphoreClockTask != NULL); // assert create semaphore control
-  xSemaphoreGive(xSemaphoreClockTask); // load the semaphore with a token
-
-  /* Attempt to create a mutex. */
-  xMutexI2CGuard = xSemaphoreCreateMutex();
-  assert(xMutexI2CGuard != NULL); // assert create mutex control
-
-  /* Attempt to create a queue. */
-  xQueueClockTask = xQueueCreate(2, sizeof(time_t));
-  assert(xQueueClockTask != NULL); // assert create queue control
-
-  // Start the scheduler
+  /* Start the scheduler */
   vTaskStartScheduler(); // should never return
 
-  // Will only get here if there was not enough heap space
+  /* Will only get here if there was not enough heap space */
 
   while (1)
-    ;
 
   return 0;
 }
 
 static void prvSetupHardware(void) {
-  // It's place to hardware configuration
+  /* It's place to clock and memory configuration */
   SystemInit();
   /* zw³oka na ustabilizowanie siê zegarów / koniecznie musi byæ */
-  for (uint32_t i = 0; i < 5000; i++) {
-    asm("nop");
-  }
+  for (uint32_t i = 0; i < 5000; i++) {asm("nop");}
+  
   SYSTEM_MANAGER_Initialize();
   mcp79410.InitRTCC();
   max7219.InitAllDevice();
@@ -112,7 +90,6 @@ void vClockTask(void *pvParameters) {
 void vDisplayTask(void *pvParameters) {
 
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
-  uint8_t kropka_flags = 1; // clock Heart Beat
 
   for (;;) {
 
@@ -121,31 +98,66 @@ void vDisplayTask(void *pvParameters) {
 #ifdef debug
       printf("Hello vDisplayTask\n");
 #endif
-      // LED1_Toggle();
-
+       uint32_t notificationvalue = ulTaskNotifyTake( pdTRUE, 0 );
       /* display minutes*/
+
       max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F));        // wyswietl cyfre jednosci
       max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((MCP79410_Time_DisplayTask.MIN >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+     
+      if(notificationvalue & 0x02) {
+        // wygaœ segmenty dla minut
+        max7219.SendToDevice(Device0, MAX7219_DIGIT0, 0xF); // zgaœ cyfrê jednosci
+        max7219.SendToDevice(Device0, MAX7219_DIGIT1, 0xF); // zgaœ cyfrê dziesiatki
+        
+      }
 
       /* display hour*/
-      if (kropka_flags) {
-        max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F) | kropka); // wyswietl cyfre jednosci plus kropka
-        kropka_flags = 0;
-      } else {
-        max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F)); // wyswietl cyfre jednosci bez kropki
-        kropka_flags = 1;
+
+      max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F) | kropka_int_flag); // wyswietl cyfre jednosci plus kropka
+      max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((MCP79410_Time_DisplayTask.HOUR >> 4) & 0x0F));            // wyswietl cyfre dziesiatki
+      
+     // if (touch_SELECT_flag == 2) {
+        // wygaœ segmenty dla minut
+     //   max7219.SendToDevice(Device0, MAX7219_DIGIT2, 0xF); // zgaœ cyfrê jednosci
+      //  max7219.SendToDevice(Device0, MAX7219_DIGIT3, 0xF); // zgaœ cyfrê dziesiatki
+        
+     // }
+    }
+  }
+}
+
+void vTouchTask(void *pvParameters) {
+static uint8_t touch_SELECT_flag = 0;
+  for (;;) {
+
+    if (touch_int_flag) {
+      touch_int_flag = 0;                                                 // zeruj flagê dotyku
+      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS3_SELECT) { // dotyk pola CS3 "SELECT"
+        xTaskNotify(xDisplayTaskHandle, ( 1UL << 1UL ), eSetBits );
+        //touch_SELECT_flag++;                                              // ustaw flagê dla dotyku pola SELECT
+       // if (touch_SELECT_flag > 2){
+       //   touch_SELECT_flag = 0;
+       //   }
       }
-      max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((MCP79410_Time_DisplayTask.HOUR >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+
+      cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt
+
+#ifdef debug
+      printf("Hello vTouchTask\n");
+#endif
     }
   }
 }
 
 /*signal on PB5 pin generate IRQ*/
 void EXTI4_15_IRQHandler(void) {
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    
   /* Inerrupt from MCP79410 MFP - PB5 ? */
+
   if (EXTI->FPR1 & EXTI_FPR1_FPIF5) {
     EXTI->FPR1 |= EXTI_FPR1_FPIF5; // clear pending
+    kropka_int_flag ^= kropka; // sterowania miganiem kropki co 1 sek zmiana stanu
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     xSemaphoreGiveFromISR(xSemaphoreClockTask, &xHigherPriorityTaskWoken);
     /* If xHigherPriorityTaskWoken was set to true you
         we should yield.  The actual macro used here is
@@ -157,9 +169,15 @@ void EXTI4_15_IRQHandler(void) {
 
   if (EXTI->FPR1 & EXTI_FPR1_FPIF4) {
     EXTI->FPR1 |= EXTI_FPR1_FPIF4; // clear pending
-    // if(cap1293.read(CAP1296_SENSTATUS) == 1) GPIOA->ODR |= GPIO_ODR_OD8 ;  //dotyk pierwszego pola wykryty LED ON
-    // if(cap1293.read(CAP1296_SENSTATUS) == 2) GPIOA->ODR &= ~GPIO_ODR_OD8 ; //dotyk drugiego pola wykryty LED OFF
-    LED2_Toggle();
-    cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt
+    touch_int_flag = 1 ;
+        
   }
 }
+
+
+
+
+
+
+// if(cap1293.read(CAP1293_SENSTATUS) == 1) GPIOA->ODR |= GPIO_ODR_OD8 ;  //dotyk pierwszego pola wykryty LED ON
+// if(cap1293.read(CAP1293_SENSTATUS) == 2) GPIOA->ODR &= ~GPIO_ODR_OD8 ; //dotyk drugiego pola wykryty LED OFF
