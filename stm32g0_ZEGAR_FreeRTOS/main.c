@@ -90,8 +90,8 @@ void vClockTask(void *pvParameters) {
 void vDisplayTask(void *pvParameters) {
 
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
-  uint8_t minute_segment_mask = 1;
-  uint8_t hour_segment_mask = 2;
+  uint8_t minute_segment_mask = 2; // set bit no 1 (0...7)
+  uint8_t hour_segment_mask = 4; // set bit no 2 (0...7)
 
   for (;;) {
 
@@ -107,7 +107,7 @@ void vDisplayTask(void *pvParameters) {
       max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F));        // wyswietl cyfre jednosci
       max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((MCP79410_Time_DisplayTask.MIN >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
 
-      if (notificationvalue & minute_segment_mask) { // migniêcie segmentem minut dla potrzeb sygnalizacji ustawiania czasu
+      if (notificationvalue & minute_segment_mask) { // migniêcie segmentem minut, dla potrzeb sygnalizacji ustawiania czasu
         // wygaœ segmenty dla minut
         max7219.SendToDevice(Device0, MAX7219_DIGIT0, 0xF); // zgaœ cyfrê jednosci
         max7219.SendToDevice(Device0, MAX7219_DIGIT1, 0xF); // zgaœ cyfrê dziesiatki
@@ -118,7 +118,7 @@ void vDisplayTask(void *pvParameters) {
       max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F) | kropka_int_flag); // wyswietl cyfre jednosci plus kropka
       max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((MCP79410_Time_DisplayTask.HOUR >> 4) & 0x0F));            // wyswietl cyfre dziesiatki
 
-      if (notificationvalue & hour_segment_mask) { // migniêcie segmentem godzin dla potrzeb sygnalizacji ustawiania czasu
+      if (notificationvalue & hour_segment_mask) { // migniêcie segmentem godzin, dla potrzeb sygnalizacji ustawiania czasu
         // wygaœ segmenty dla godzin
         max7219.SendToDevice(Device0, MAX7219_DIGIT2, 0xF); // zgaœ cyfrê jednosci
         max7219.SendToDevice(Device0, MAX7219_DIGIT3, 0xF); // zgaœ cyfrê dziesiatki
@@ -137,9 +137,9 @@ static uint8_t touch_SELECT_counter = 0;
         touch_int_flag = 0;   // zeruj flagê dotyku otrzyman¹ z przerwania EXTI4_15_IRQHandler
       
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS3_SELECT) { // dotyk pola CS3 "SELECT" ?
-        xTaskNotify(xDisplayTaskHandle, ( 1 << touch_SELECT_counter++ ), eSetBits ); //wyœlij do xDisplayTask flagê, bit 1 lub bit 2 ustawiony
+        xTaskNotify(xDisplayTaskHandle, ( 1 << ++touch_SELECT_counter ), eSetBits ); //wyœlij do xDisplayTask flagê, bit 1 lub bit 2 ustawiony
                                               
-        if (touch_SELECT_counter > 1){
+        if (touch_SELECT_counter > 2){
           touch_SELECT_counter = 0;
           }
       }
