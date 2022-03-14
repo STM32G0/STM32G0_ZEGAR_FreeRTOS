@@ -90,8 +90,8 @@ void vClockTask(void *pvParameters) {
 void vDisplayTask(void *pvParameters) {
 
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
-  uint8_t minute_segment_mask = 1; // set bit no 1 (0...7)
-  uint8_t hour_segment_mask = 2; // set bit no 2 (0...7)
+  uint32_t minute_segment_mask = 1; // set bit no 0 (0...7)
+  uint32_t hour_segment_mask = 2; // set bit no 1 (0...7)
 
   for (;;) {
 
@@ -131,7 +131,7 @@ void vTouchTask(void *pvParameters) {
 
   static uint8_t touch_SELECT_counter = 0;
   uint32_t notificationvalue ; 
-  uint8_t tasknotify_mask = 1;                                          // set bit no 0 (0...7)
+  uint32_t tasknotify_mask = 1;    // set bit no 0 (0...7)
 
   for (;;) {
   /* Task Notify from intrrupt EXTI4_15_IRQHandler */
