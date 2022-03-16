@@ -29,10 +29,8 @@
  <Project>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;Interface"/>
+  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;FreeRTOS APP Support"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;FreeRTOS APP Support"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;Interface"/>
@@ -67,8 +65,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="141" filename="main.c"/>
-   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="162" filename="main.c"/>
+   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="142" filename="main.c"/>
+   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="163" filename="main.c"/>
    <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="106" filename="main.c"/>
   </Watches>
  </Watch1>
@@ -82,9 +80,10 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="104" useTextEdit="1" path="main.c" left="0" selected="1" top="89" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="6" y="150" useTextEdit="1" path="main.c" left="0" selected="1" top="146" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="15" y="12" useTextEdit="1" path="mcp79410.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="56" y="31" useTextEdit="1" path="TaskCreate.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="20" y="30" useTextEdit="1" path="TaskCreate.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="TaskCreate.h" left="0" top="0" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

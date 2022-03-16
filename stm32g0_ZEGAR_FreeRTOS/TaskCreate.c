@@ -19,16 +19,14 @@ IDE   : SEGGER Embedded Studio
 #include "semphr.h"
 #include "TaskCreate.h"
 
-
 /* TASK Handle */
- TaskHandle_t xClockTaskHandle = NULL;
- TaskHandle_t xDisplayTaskHandle = NULL;
- TaskHandle_t xTouchTaskHandle = NULL;
+TaskHandle_t xClockTaskHandle = NULL;
+TaskHandle_t xDisplayTaskHandle = NULL;
+TaskHandle_t xTouchTaskHandle = NULL;
 
-void TaskCreate(void){
-/* Task Create */
-assert(xTaskCreate(vClockTask, "ClockTask", 384, NULL, 4, &xClockTaskHandle) == pdPASS);     // assert create task control
-assert(xTaskCreate(vDisplayTask, "DisplayTask", 384, NULL, 3, &xDisplayTaskHandle) == pdPASS); 
-assert(xTaskCreate(vTouchTask, "TouchTask", 384, NULL, 3, &xTouchTaskHandle) == pdPASS); 
-
+void TaskCreate(void) {
+  /* Task Create */
+  assert(xTaskCreate(vClockTask, "ClockTask", 384, NULL, 4, &xClockTaskHandle) == pdPASS); // assert create task control
+  assert(xTaskCreate(vDisplayTask, "DisplayTask", 384, NULL, 3, &xDisplayTaskHandle) == pdPASS);
+  assert(xTaskCreate(vTouchTask, "TouchTask", 384, NULL, 3, &xTouchTaskHandle) == pdPASS);
 }
