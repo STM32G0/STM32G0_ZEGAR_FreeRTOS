@@ -21,5 +21,7 @@ const mcp79410_interface_t mcp79410 = {
 .getTime_HOUR = get_HOUR,
 .getTime_MIN = get_MIN,
 .getTime_SEC = get_SEC,
+.setTime_MIN = set_MIN,
+.setTime_HOUR = set_HOUR,
 
 };

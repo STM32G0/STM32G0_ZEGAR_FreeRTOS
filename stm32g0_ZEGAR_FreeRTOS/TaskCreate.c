@@ -27,8 +27,8 @@ IDE   : SEGGER Embedded Studio
 
 void TaskCreate(void){
 /* Task Create */
-assert(xTaskCreate(vClockTask, "ClockTask", 256, NULL, 4, &xClockTaskHandle) == pdPASS);     // assert create task control
-assert(xTaskCreate(vDisplayTask, "DisplayTask", 256, NULL, 3, &xDisplayTaskHandle) == pdPASS); 
-assert(xTaskCreate(vTouchTask, "TouchTask", 256, NULL, 3, &xTouchTaskHandle) == pdPASS); 
+assert(xTaskCreate(vClockTask, "ClockTask", 384, NULL, 4, &xClockTaskHandle) == pdPASS);     // assert create task control
+assert(xTaskCreate(vDisplayTask, "DisplayTask", 384, NULL, 3, &xDisplayTaskHandle) == pdPASS); 
+assert(xTaskCreate(vTouchTask, "TouchTask", 384, NULL, 3, &xTouchTaskHandle) == pdPASS); 
 
 }

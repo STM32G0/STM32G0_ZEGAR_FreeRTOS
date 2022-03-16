@@ -53,7 +53,7 @@ i2c_rtcc_wr(ADDR_CTRL,0xC0);         // square wave on MFP, no alarms, MFP = 1Hz
 day = i2c_rtcc_rd(ADDR_DAY);
 i2c_rtcc_wr(ADDR_DAY,day | VBATEN);  // enable the battery back-up
 /*Set Time*/
-/* nie uzywamy YEAR, MNTH , DATE i nie ustawiaæ tego !!! */
+/* nie uzywamy YEAR, MNTH , DATE i nie ustawia tego !!! */
 //i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
 //i2c_rtcc_wr(ADDR_MNTH,0x02);         // initialize MONTH register : luty 
 //i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date =  
@@ -63,9 +63,20 @@ i2c_rtcc_wr(ADDR_MIN,dec2bcd(34));     // initialize MIN   register : min  = 34
 i2c_rtcc_wr(ADDR_SEC,START_32KHZ);     // init SEC register and start the 32khz oscillator SEC = 00 + ST bit = 1
 }   
 
+//..............................................................................
+// The below function set time
+//..............................................................................
+
+void set_MIN(uint8_t minute){
+i2c_rtcc_wr(ADDR_MIN,dec2bcd(minute)); 
+}
+
+void set_HOUR(uint8_t hour){
+i2c_rtcc_wr(ADDR_MIN,dec2bcd(hour)); 
+}
 
 /*****************************************************************************
-                    Get time MCP79410 and convert BCD to DEC
+                    Get time MCP79410 in BCD code
  *****************************************************************************/
 uint8_t get_YEAR(void) {
 uint8_t yr = 0;   

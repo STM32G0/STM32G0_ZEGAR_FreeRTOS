@@ -25,6 +25,8 @@ uint8_t (*getTime_DAY)(void);
 uint8_t (*getTime_HOUR)(void);
 uint8_t (*getTime_MIN)(void);
 uint8_t (*getTime_SEC)(void);
+void (*setTime_MIN)(uint8_t minute);
+void (*setTime_HOUR)(uint8_t hour);
 
 } mcp79410_interface_t ;
 
