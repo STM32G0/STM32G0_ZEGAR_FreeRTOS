@@ -72,7 +72,7 @@ i2c_rtcc_wr(ADDR_MIN,dec2bcd(minute));
 }
 
 void set_HOUR(uint8_t hour){
-i2c_rtcc_wr(ADDR_MIN,dec2bcd(hour)); 
+i2c_rtcc_wr(ADDR_HOUR,dec2bcd(hour)); 
 }
 
 /*****************************************************************************
