@@ -9,16 +9,18 @@ IDE   : SEGGER Embedded Studio
 #include <string.h>
 #include "system_config.h"
 #include "max7219.h"
+#include "max7219_interface.h"
+#include "mcp79410.h"
 
 uint8_t Max7219SpiBuffer[MAX7219_DEVICES * 2];
 
-// wyslanie 2 bajtów do ukladu MAX7219
-// 1 bajt (adress) - adres rejestru do którego bêd¹ wpisane dane
+// wyslanie 2 bajtw do ukladu MAX7219
+// 1 bajt (adress) - adres rejestru do ktrego bd wpisane dane
 // 2 bajt (data) - dane do zapisania
 void max7219_send(uint8_t adress, uint8_t data) {
   CS_SetLow(); // ustawienie stanu niskiego na linii CS
   SPI1_Transmit_2x8bit(adress, data);
-  CS_SetHigh(); // ustawienie stanu wysokiego na linii CS (zatrzaœniêcie danych w ukladzie zboczem narastajacym)
+  CS_SetHigh(); // ustawienie stanu wysokiego na linii CS (zatrzanicie danych w ukladzie zboczem narastajacym)
 }
 
 void max7219_SendToDevice(uint8_t DeviceNumber, uint8_t Adress, uint8_t Data) {
@@ -31,7 +33,7 @@ void max7219_SendToDevice(uint8_t DeviceNumber, uint8_t Adress, uint8_t Data) {
   Max7219SpiBuffer[(MAX7219_DEVICES * 2) - Offset - 1] = Data;
   CS_SetLow(); // ustawienie stanu niskiego na linii CS
   SPI1_Transmit_Buffer(Max7219SpiBuffer, (MAX7219_DEVICES * 2));
-  CS_SetHigh(); // ustawienie stanu wysokiego na linii CS (zatrzaœniêcie danych w ukladzie zboczem narastajacym)
+  CS_SetHigh(); // ustawienie stanu wysokiego na linii CS (zatrzanicie danych w ukladzie zboczem narastajacym)
 }
 
 // inicjalizacja ukladu MAX7219
@@ -64,3 +66,17 @@ void max7219_clear(void) {
     }
   }
 }
+
+/* funkcje do wspÃ³Å‚pracy z MCP79410 i wyswietlania czasu*/
+void max7219_display_Minutes(uint8_t minutes){
+/* display minutes*/
+          max7219.SendToDevice(Device0, MAX7219_DIGIT0, (dec2bcd(minutes) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
+          max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((dec2bcd(minutes) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+}
+
+void max7219_display_Hour(uint8_t hour){
+/* display hour*/
+          max7219.SendToDevice(Device0, MAX7219_DIGIT2, (dec2bcd(hour) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
+          max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((dec2bcd(hour) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+}
+

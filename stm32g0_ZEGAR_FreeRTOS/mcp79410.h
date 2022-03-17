@@ -16,8 +16,8 @@ void i2c_eeprom_wr(uint8_t registerAdress, uint8_t data); // writes data to  the
 uint8_t i2c_rtcc_rd(uint8_t registerAdress); //read data from the RTCC
 void i2c_rtcc_ini(void); // initializes the I2C RTCC
 
-extern uint8_t dec2bcd(uint8_t dec);
-extern uint8_t bcd2dec(uint8_t bcd);
+uint8_t dec2bcd(uint8_t dec);
+uint8_t bcd2dec(uint8_t bcd);
 
 uint8_t get_YEAR(void);
 uint8_t get_MONTH(void);

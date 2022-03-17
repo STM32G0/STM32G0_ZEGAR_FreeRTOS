@@ -19,6 +19,9 @@ void (*InitAllDevice)(void);
 void (*ClearAllDevice)(void);
 void (*SendAllDevice)(uint8_t adress, uint8_t data);
 void (*SendToDevice)(uint8_t DeviceNumber, uint8_t adress, uint8_t data);
+void (*Display_MIN)(uint8_t minutes);
+void (*Display_HOUR)(uint8_t hour);
+
 
 } max7219_interface_t ;
 

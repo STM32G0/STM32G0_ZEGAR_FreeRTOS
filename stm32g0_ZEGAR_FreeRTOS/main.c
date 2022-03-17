@@ -135,8 +135,9 @@ void vTouchTask(void *pvParameters) {
   uint8_t touch_SELECT_counter = 0;
   uint32_t notificationvalue = 0;
   uint32_t tasknotify_mask = 1; // set bit no 0 (0...7)
-  uint8_t minuty = 0;
-  uint8_t godzina = 0;
+  int8_t minuty = 0; // przy ustawianiu czasu schodzimy na wartosci ujemne
+  int8_t godzina = 0;
+  enum{selectMinute = 1, selectHour = 2};
 
   for (;;) {
     /* Task Notify from intrrupt EXTI4_15_IRQHandler */
@@ -156,10 +157,13 @@ void vTouchTask(void *pvParameters) {
         }
         xTaskNotify(xDisplayTaskHandle, (1 << touch_SELECT_counter++), eSetBits); // wyslij do xDisplayTask flag, bit 0 lub bit 1 ustawiony
       }
+
       /*************** Reakcja na dotyk pola CS2 - UP *******************/
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS2_UP) { // dotyk pola CS2 "UP" ?
         switch (touch_SELECT_counter) {
-        case 1:                                     // zmieniamy minuty
+
+        case selectMinute:               // zmieniamy minuty
+
           minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
           minuty++;
           if (minuty > 59) {
@@ -168,28 +172,49 @@ void vTouchTask(void *pvParameters) {
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
           // zeruj sekundy w MCP79410
-          /* display minutes*/
-          max7219.SendToDevice(Device0, MAX7219_DIGIT0, (dec2bcd(minuty) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
-          max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((dec2bcd(minuty) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+          max7219.Display_MIN(minuty);  // display minutes
+          
           break;
 
-        case 2:                                       // zmieniamy godziny
+        case selectHour:                // zmieniamy godziny
+
           godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
           godzina++;
           if (godzina > 23) {
             godzina = 0;
           }
           mcp79410.setTime_HOUR(godzina); // ustaw godzine w MCP79410
-          /* display hour*/
-          max7219.SendToDevice(Device0, MAX7219_DIGIT2, (dec2bcd(godzina) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
-          max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((dec2bcd(godzina) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+          max7219.Display_HOUR(godzina);  // display hour
+          
           break;
         }
       }
 
       /******************* Reakcja na dotyk pola CS1 - DOWN ********************/
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS1_DOWN) { // dotyk pola CS1 "DOWN" ?
-        // Tutaj obsługa dla CS1
+        switch (touch_SELECT_counter) {
+        case selectMinute:                                     // zmieniamy minuty
+          minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
+          minuty--;
+          if (minuty < 0) {
+            minuty = 59;
+          }
+
+          mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
+          // zeruj sekundy w MCP79410
+          max7219.Display_MIN(minuty);  // display minutes
+          break;
+
+        case selectHour:                // zmieniamy godziny
+          godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
+          godzina--;
+          if (godzina < 0) {
+            godzina = 23;
+          }
+          mcp79410.setTime_HOUR(godzina);  // ustaw godzine w MCP79410
+          max7219.Display_HOUR(godzina);   // display hour
+          break;
+        }
       }
 
 #ifdef debug
