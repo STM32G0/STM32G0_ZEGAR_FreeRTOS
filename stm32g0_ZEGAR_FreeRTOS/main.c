@@ -26,7 +26,7 @@ IDE   : SEGGER Embedded Studio
 #define debug // Semihosting on/off
 
 static void prvSetupHardware(void);
-volatile uint8_t kropka_int_flag = 0 ;	
+// uint8_t kropka_int_flag = 0 ;	
 
 
 int main(void) {
@@ -89,42 +89,36 @@ void vDisplayTask(void *pvParameters) {
 
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
   uint32_t minute_segment_mask = 1; // set bit no 0 (0...7)
-  uint32_t hour_segment_mask = 2; // set bit no 1 (0...7)
+  uint32_t hour_segment_mask = 2;   // set bit no 1 (0...7)
   uint32_t notificationvalue = 0;
 
   for (;;) {
 
-    if (xQueueReceive(xQueueClockTask, &MCP79410_Time_DisplayTask, portMAX_DELAY) == pdPASS) {// pobierz dane (czas) z kolejki jeli s dostpne, zapisz je do struktury MCP79410_Time_DisplayTask
+    if (xQueueReceive(xQueueClockTask, &MCP79410_Time_DisplayTask, portMAX_DELAY) == pdPASS) { // pobierz dane (czas) z kolejki jeli s dostpne, zapisz je do struktury MCP79410_Time_DisplayTask
 /* mcp79410_time now contains a copy of MCP79410_Time_DisplayTask  . */
 #ifdef debug
       printf("Hello vDisplayTask\n");
 #endif
-/* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/ 
-                 
+      /* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
+
       notificationvalue = ulTaskNotifyTake(pdTRUE, 0); // Timeout = 0 - bez blokowania zadania
 #ifdef debug
-    printf("notificationvalue %d\n", notificationvalue);
+      printf("notificationvalue %d\n", notificationvalue);
 #endif
       /* display minutes*/
-
-      max7219.SendToDevice(Device0, MAX7219_DIGIT0, (MCP79410_Time_DisplayTask.MIN & 0x0F));        // wyswietl cyfre jednosci
-      max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((MCP79410_Time_DisplayTask.MIN >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+      max7219.Display_MIN(MCP79410_Time_DisplayTask.MIN); // display minutes
 
       if (notificationvalue & minute_segment_mask) { // mignicie segmentem minut, dla potrzeb sygnalizacji ustawiania czasu
-        // wygas segmenty dla minut
-        max7219.SendToDevice(Device0, MAX7219_DIGIT0, 0xF); // zgas cyfr jednosci
-        max7219.SendToDevice(Device0, MAX7219_DIGIT1, 0xF); // zgas cyfr dziesiatki
+        /* wygas segmenty dla minut */
+        max7219.ClearDisplay_MIN();
       }
 
       /* display hour*/
-
-      max7219.SendToDevice(Device0, MAX7219_DIGIT2, (MCP79410_Time_DisplayTask.HOUR & 0x0F) | kropka_int_flag); // wyswietl cyfre jednosci plus kropka
-      max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((MCP79410_Time_DisplayTask.HOUR >> 4) & 0x0F));            // wyswietl cyfre dziesiatki
+      max7219.Display_HOUR(MCP79410_Time_DisplayTask.HOUR); // display hour
 
       if (notificationvalue & hour_segment_mask) { // mignicie segmentem godzin, dla potrzeb sygnalizacji ustawiania czasu
-        // wygas segmenty dla godzin
-        max7219.SendToDevice(Device0, MAX7219_DIGIT2, 0xF); // zgas cyfr jednosci
-        max7219.SendToDevice(Device0, MAX7219_DIGIT3, 0xF); // zgas cyfr dziesiatki
+        /* wygas segmenty dla godzin */
+        max7219.ClearDisplay_HOUR();
       }
     }
   }
@@ -146,7 +140,7 @@ void vTouchTask(void *pvParameters) {
         &notificationvalue, /* Receives the notification value. */
         portMAX_DELAY);     /* Block indefinitely. */
 
-    if (notificationvalue & tasknotify_mask) {                                                       // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
+    if (notificationvalue & tasknotify_mask) { // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
       cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, musi byc na poczatku inaczej zmiana kontekstu moze spowodowac opoznienie kasowania flagi
 
       /**************** Reakcja na dotyk pola CS3 - SELECT ***************/
@@ -172,7 +166,7 @@ void vTouchTask(void *pvParameters) {
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
           // zeruj sekundy w MCP79410
-          max7219.Display_MIN(minuty);  // display minutes
+          max7219.Display_MIN(dec2bcd(minuty));  // display minutes
           
           break;
 
@@ -184,7 +178,7 @@ void vTouchTask(void *pvParameters) {
             godzina = 0;
           }
           mcp79410.setTime_HOUR(godzina); // ustaw godzine w MCP79410
-          max7219.Display_HOUR(godzina);  // display hour
+          max7219.Display_HOUR(dec2bcd(godzina));  // display hour
           
           break;
         }
@@ -202,7 +196,7 @@ void vTouchTask(void *pvParameters) {
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
           // zeruj sekundy w MCP79410
-          max7219.Display_MIN(minuty);  // display minutes
+          max7219.Display_MIN(dec2bcd(minuty));  // display minutes
           break;
 
         case selectHour:                // zmieniamy godziny
@@ -212,7 +206,7 @@ void vTouchTask(void *pvParameters) {
             godzina = 23;
           }
           mcp79410.setTime_HOUR(godzina);  // ustaw godzine w MCP79410
-          max7219.Display_HOUR(godzina);   // display hour
+          max7219.Display_HOUR(dec2bcd(godzina));   // display hour
           break;
         }
       }

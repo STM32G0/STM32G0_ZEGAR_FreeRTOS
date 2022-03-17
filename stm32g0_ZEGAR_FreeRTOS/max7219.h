@@ -47,6 +47,7 @@ IDE   : SEGGER Embedded Studio
 #define minus 1        // wyswietlenie znaku minus , na poyzcji wyswietlacza minus, dekodowanie znakw jako kod 7 segmentowy nie BCD jak w pozostalych
 
 enum{Device0=0 , Device1}; // mamy dwa ukady MAX7219 w kaskadzie
+extern uint8_t kropka_int_flag ; //uzyte w przerwaniu EXTI4_15_IRQHandler i w funkcji max7219_display_Hour() jako Heart Beat zegarka
 
 void max7219_init(void);
 void max7219_clear(void);
@@ -55,5 +56,7 @@ void max7219_SendToDevice(uint8_t DeviceNumber, uint8_t Adress, uint8_t Data);
 /* funkcje do wspolpracy z zegarkiem MCP79410) */
 void max7219_display_Minutes(uint8_t minutes);
 void max7219_display_Hour(uint8_t hour);
+void max7219_clear_display_Minutes(void);
+void max7219_clear_display_Hour(void);
 
 #endif /* MAX7219_H_ */

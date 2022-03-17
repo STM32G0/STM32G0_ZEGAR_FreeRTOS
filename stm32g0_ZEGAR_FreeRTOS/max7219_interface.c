@@ -16,5 +16,7 @@ const max7219_interface_t max7219 = {
 .SendToDevice = max7219_SendToDevice,
 .Display_MIN = max7219_display_Minutes,
 .Display_HOUR = max7219_display_Hour,
+.ClearDisplay_MIN = max7219_clear_display_Minutes,
+.ClearDisplay_HOUR = max7219_clear_display_Hour,
 
 };

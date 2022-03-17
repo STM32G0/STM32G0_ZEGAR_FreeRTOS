@@ -10,9 +10,10 @@ IDE   : SEGGER Embedded Studio
 #include "system_config.h"
 #include "max7219.h"
 #include "max7219_interface.h"
-#include "mcp79410.h"
+
 
 uint8_t Max7219SpiBuffer[MAX7219_DEVICES * 2];
+uint8_t kropka_int_flag = 0 ;	
 
 // wyslanie 2 bajtw do ukladu MAX7219
 // 1 bajt (adress) - adres rejestru do ktrego bd wpisane dane
@@ -70,13 +71,25 @@ void max7219_clear(void) {
 /* funkcje do współpracy z MCP79410 i wyswietlania czasu*/
 void max7219_display_Minutes(uint8_t minutes){
 /* display minutes*/
-          max7219.SendToDevice(Device0, MAX7219_DIGIT0, (dec2bcd(minutes) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
-          max7219.SendToDevice(Device0, MAX7219_DIGIT1, ((dec2bcd(minutes) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+          max7219.SendToDevice(Device0, MAX7219_DIGIT0,  minutes & 0x0F);        // wyswietl cyfre jednosci
+          max7219.SendToDevice(Device0, MAX7219_DIGIT1, (minutes >> 4) & 0x0F); // wyswietl cyfre dziesiatki
 }
 
 void max7219_display_Hour(uint8_t hour){
 /* display hour*/
-          max7219.SendToDevice(Device0, MAX7219_DIGIT2, (dec2bcd(hour) & 0x0F));        // wyswietl cyfre jednosci i nie zapomnij zdekodowac z DEC na BCD
-          max7219.SendToDevice(Device0, MAX7219_DIGIT3, ((dec2bcd(hour) >> 4) & 0x0F)); // wyswietl cyfre dziesiatki
+          max7219.SendToDevice(Device0, MAX7219_DIGIT2,  (hour & 0x0F) | kropka_int_flag);        // wyswietl cyfre jednosci plus kropka
+          max7219.SendToDevice(Device0, MAX7219_DIGIT3, (hour >> 4) & 0x0F); // wyswietl cyfre dziesiatki
+}
+
+void max7219_clear_display_Minutes(void){
+/* display minutes*/
+          max7219.SendToDevice(Device0, MAX7219_DIGIT0, 0x0F);   // zgas cyfre jednosci 
+          max7219.SendToDevice(Device0, MAX7219_DIGIT1, 0x0F);   // zgaś cyfre dziesiatki
+}
+
+void max7219_clear_display_Hour(void){
+/* display hour*/
+          max7219.SendToDevice(Device0, MAX7219_DIGIT2, 0x0F); // zgas cyfre jednosci
+          max7219.SendToDevice(Device0, MAX7219_DIGIT3, 0x0F); // zgaś cyfre dziesiatki
 }
 
