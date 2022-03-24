@@ -22,12 +22,18 @@ IDE   : SEGGER Embedded Studio
 #include "TaskCreate.h"
 #include "SemaphoreCreate.h"
 #include "QueueCreate.h"
+#include "ds18b20.h"
 
 #define debug // Semihosting on/off
 
 static void prvSetupHardware(void);
-// uint8_t kropka_int_flag = 0 ;	
-
+// uint8_t kropka_int_flag = 0 ;
+/* Machine State for DS18B20 */
+typedef enum {state0 = 0,state1,state2,state3,stateEnd} state_t; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
+volatile state_t STATE_DS18B20_Reset = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
+volatile state_t STATE_DS18B20_WriteBit = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler	
+volatile state_t STATE_DS18B20_ReadBit = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler		
+volatile uint8_t bit ;
 
 int main(void) {
   /* FreeRTOS APP support */
@@ -78,7 +84,7 @@ void vClockTask(void *pvParameters) {
       MCP79410_Time_ClockTask.MIN = mcp79410.getTime_MIN();
       MCP79410_Time_ClockTask.HOUR = mcp79410.getTime_HOUR();
       /* sekcja krytyczna end ??? */
-      if (xQueueClockTask != NULL) {// wysyamy do kolejki dane (w strukturze) o czasie, pobrane z MCP79410, 
+      if (xQueueClockTask != NULL) {// wysylamy do kolejki dane (struktura) o czasie, pobrane z MCP79410, 
         xQueueSend(xQueueClockTask, (void *)&MCP79410_Time_ClockTask, (TickType_t)0); //Timeout = 0 - bez blokowania zadania
       }
     }
@@ -126,12 +132,14 @@ void vDisplayTask(void *pvParameters) {
 
 void vTouchTask(void *pvParameters) {
 
+  time_t MCP79410_Time_TouchTask = {0, 0, 0};
   uint8_t touch_SELECT_counter = 0;
   uint32_t notificationvalue = 0;
   uint32_t tasknotify_mask = 1; // set bit no 0 (0...7)
-  int8_t minuty = 0; // przy ustawianiu czasu schodzimy na wartosci ujemne
+  int8_t minuty = 0;            // przy ustawianiu czasu schodzimy na wartosci ujemne
   int8_t godzina = 0;
-  enum{selectMinute = 1, selectHour = 2};
+  enum { selectMinute = 1,
+    selectHour = 2 };
 
   for (;;) {
     /* Task Notify from intrrupt EXTI4_15_IRQHandler */
@@ -140,7 +148,7 @@ void vTouchTask(void *pvParameters) {
         &notificationvalue, /* Receives the notification value. */
         portMAX_DELAY);     /* Block indefinitely. */
 
-    if (notificationvalue & tasknotify_mask) { // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
+    if (notificationvalue & tasknotify_mask) {                                                       // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
       cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, musi byc na poczatku inaczej zmiana kontekstu moze spowodowac opoznienie kasowania flagi
 
       /**************** Reakcja na dotyk pola CS3 - SELECT ***************/
@@ -156,7 +164,7 @@ void vTouchTask(void *pvParameters) {
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS2_UP) { // dotyk pola CS2 "UP" ?
         switch (touch_SELECT_counter) {
 
-        case selectMinute:               // zmieniamy minuty
+        case selectMinute: // zmieniamy minuty
 
           minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
           minuty++;
@@ -165,12 +173,17 @@ void vTouchTask(void *pvParameters) {
           }
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
+          MCP79410_Time_TouchTask.MIN = dec2bcd(minuty);
           // zeruj sekundy w MCP79410
-          max7219.Display_MIN(dec2bcd(minuty));  // display minutes
-          
+          // wyslij do kolejki xQueueClockTask minuty, kolejka jest odbierana w zadaniu vDisplayTask
+          if (xQueueClockTask != NULL) {                                                  // wysylamy do kolejki dane (struktura) o czasie, pobrane z MCP79410,
+            xQueueSend(xQueueClockTask, (void *)&MCP79410_Time_TouchTask, (TickType_t)0); // Timeout = 0 - bez blokowania zadania
+          }
+         // max7219.Display_MIN(dec2bcd(minuty)); // display minutes
+
           break;
 
-        case selectHour:                // zmieniamy godziny
+        case selectHour: // zmieniamy godziny
 
           godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
           godzina++;
@@ -178,8 +191,9 @@ void vTouchTask(void *pvParameters) {
             godzina = 0;
           }
           mcp79410.setTime_HOUR(godzina); // ustaw godzine w MCP79410
-          max7219.Display_HOUR(dec2bcd(godzina));  // display hour
-          
+          // wyslij do kolejki xQueueClockTask godzine
+          max7219.Display_HOUR(dec2bcd(godzina)); // display hour
+
           break;
         }
       }
@@ -187,7 +201,7 @@ void vTouchTask(void *pvParameters) {
       /******************* Reakcja na dotyk pola CS1 - DOWN ********************/
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS1_DOWN) { // dotyk pola CS1 "DOWN" ?
         switch (touch_SELECT_counter) {
-        case selectMinute:                                     // zmieniamy minuty
+        case selectMinute:                          // zmieniamy minuty
           minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
           minuty--;
           if (minuty < 0) {
@@ -196,17 +210,17 @@ void vTouchTask(void *pvParameters) {
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
           // zeruj sekundy w MCP79410
-          max7219.Display_MIN(dec2bcd(minuty));  // display minutes
+          max7219.Display_MIN(dec2bcd(minuty)); // display minutes
           break;
 
-        case selectHour:                // zmieniamy godziny
+        case selectHour:                              // zmieniamy godziny
           godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
           godzina--;
           if (godzina < 0) {
             godzina = 23;
           }
-          mcp79410.setTime_HOUR(godzina);  // ustaw godzine w MCP79410
-          max7219.Display_HOUR(dec2bcd(godzina));   // display hour
+          mcp79410.setTime_HOUR(godzina);         // ustaw godzine w MCP79410
+          max7219.Display_HOUR(dec2bcd(godzina)); // display hour
           break;
         }
       }
@@ -215,6 +229,24 @@ void vTouchTask(void *pvParameters) {
       printf("Hello vTouchTask\n");
 #endif
     }
+  }
+}
+
+void vTemperatureTask(void *pvParameters) {
+ STATE_DS18B20_Reset = state0 ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
+ /* Interrupt call TIM6 */
+  TIM6->ARR = (2 - 1);  // ARR value 1/16 us per tick = 1us
+  TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+  TIM6->CNT = 0;
+  for (;;) {
+    
+  vTaskDelay( 2500 / portTICK_RATE_MS ); // co 2.5 s bedziemy odczytywac temperature
+
+#ifdef debug
+      printf("Hello vTemperatureTask\n");
+#endif
+     
+      
   }
 }
 
@@ -247,3 +279,111 @@ void EXTI4_15_IRQHandler(void) {
     portYIELD_FROM_ISR(xHigherPriorityTaskTouchWoken);
   }
 }
+
+//obsługa przerwania dla Timer6
+void TIM6_DAC_LPTIM1_IRQHandler(void){
+
+TIM6->CR1 &= ~TIM_CR1_CEN; // disable Counter
+TIM6->SR  &=  ~TIM_SR_UIF ; //clear interrupt flag
+TIM6->CNT = 0;
+/*********************** Machine STATE RESET ***************************/
+switch (STATE_DS18B20_Reset) {
+
+case state0: 
+SET_Output_Wire2();
+SET_Low_Wire2() ;
+TIM6->ARR = (480 - 1);  // ARR value 1 us per tick , for 480 us ARR = (480 - 1)
+STATE_DS18B20_Reset = state1 ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case state1: 
+SET_Input_Wire2();
+//SET_PC6_PullUP();
+TIM6->ARR = (70 - 1);  // ARR value 1 us per tick , for 70 us ARR = (70- 1) 
+STATE_DS18B20_Reset = state2 ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case state2: 
+if (TEST_Input_Wire2() == 0) { // 0 - Slave OK, 1 - Slave not response
+LED2_SetHigh() ;
+}
+TIM6->ARR = (410 - 1);  // ARR value 1 us per tick , for 410 us ARR = (410 - 1)
+STATE_DS18B20_Reset = state3 ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case state3: 
+TIM6->CR1 &= ~TIM_CR1_CEN; // disable Counter
+TIM6->CNT = 0;
+STATE_DS18B20_Reset = stateEnd ;
+break;
+
+case stateEnd: 
+// do nothing
+break;
+
+}
+
+/*********************** Machine STATE Write Bit ***************************/
+
+switch (STATE_DS18B20_WriteBit) {
+
+case state0: 
+SET_Output_Wire2();
+SET_Low_Wire2() ;
+TIM6->ARR = (2 - 1);  // ARR value 1 us per tick , for 1 us ARR = (2 - 1)
+STATE_DS18B20_Reset = state1 ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case state1: 
+if(bit){
+SET_High_Wire2();
+}
+else
+{
+SET_Low_Wire2();
+} 
+
+TIM6->ARR = (64 - 1);  // ARR value 1 us per tick , for 64 us ARR = (64- 1) 
+STATE_DS18B20_Reset = state2 ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case state2: 
+SET_Input_Wire2();
+TIM6->ARR = (2 - 1);  // ARR value 1 us per tick , for 1 us ARR = (2 - 1)
+STATE_DS18B20_Reset = stateEnd ;
+TIM6->CNT = 0;
+TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+break;
+
+case stateEnd: 
+// do nothing
+break;
+}
+
+/*********************** Machine STATE Read Bit ***************************/
+
+switch (STATE_DS18B20_WriteBit) {
+
+
+
+case stateEnd: 
+// do nothing
+break;
+}
+
+
+
+
+
+
+        }

@@ -13,4 +13,8 @@ void INTERRUPT_MANAGER_Initialize(void){
  NVIC_SetPriority(EXTI4_15_IRQn, 2);
  NVIC_EnableIRQ(EXTI4_15_IRQn);
 
+ /* TIM6 interrupt init*/
+ NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 1);
+ NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
+
 }

@@ -22,9 +22,11 @@ IDE   : SEGGER Embedded Studio
 extern void vClockTask(void *pvParameters);
 extern void vDisplayTask(void *pvParameters);
 extern void vTouchTask(void *pvParameters);
+extern void vTemperatureTask(void *pvParameters);
 /* TASK Handles */
 extern TaskHandle_t xClockTaskHandle ;
 extern TaskHandle_t xDisplayTaskHandle ;
 extern TaskHandle_t xTouchTaskHandle ;
+extern TaskHandle_t xTemperatureTaskHandle ;
 
 void TaskCreate(void);

@@ -72,6 +72,7 @@
         <file file_name="SemaphoreCreate.c" />
         <file file_name="QueueCreate.c" />
       </folder>
+      <file file_name="ds18b20.c" />
     </folder>
     <folder Name="System Files">
       <file file_name="SEGGER_THUMB_Startup.s" />
@@ -149,6 +150,7 @@
         <file file_name="SemaphoreCreate.h" />
         <file file_name="QueueCreate.h" />
       </folder>
+      <file file_name="ds18b20.h" />
     </folder>
     <configuration Name="Debug" c_user_include_directories="." />
   </project>

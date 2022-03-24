@@ -10,8 +10,10 @@ IDE   : SEGGER Embedded Studio
 
 /*TIM6 to Delay functionality*/
 void TIMER6_MANAGER_Initialize(void){
-TIM6->PSC = 16-1;  // 16MHz/16 = 1 MHz ~~ 1 uS delay (FCY 16MHz)
-TIM6->ARR = 0xffff;  // MAX ARR value
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-while (!(TIM6->SR & TIM_SR_UIF));  // UIF: Update interrupt flag..  This bit is set by hardware when the registers are updated
+
+TIM6->PSC = 16-1;  // 16MHz/16 = 1 MHz ~~ 1 uS per tick counter
+TIM6->DIER |= TIM_DIER_UIE ; // Interrupt ON
+TIM6->CNT = 0; // reset counter
+//TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
+
 }
