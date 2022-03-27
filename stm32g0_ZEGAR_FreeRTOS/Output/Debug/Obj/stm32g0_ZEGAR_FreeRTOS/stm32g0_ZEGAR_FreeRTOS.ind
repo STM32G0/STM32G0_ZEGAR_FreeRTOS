@@ -17,6 +17,7 @@
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/SemaphoreCreate.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/QueueCreate.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/ds18b20.o"
+"Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/delay.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/SEGGER_THUMB_Startup.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/STM32G0xx_Startup.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/stm32g071xx_Vectors.o"

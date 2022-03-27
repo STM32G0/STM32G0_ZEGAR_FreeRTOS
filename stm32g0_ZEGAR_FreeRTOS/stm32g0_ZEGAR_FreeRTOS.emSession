@@ -30,17 +30,9 @@
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;CMSIS Files"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source;portable"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source;portable;GCC"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source;portable;GCC;ARM_CM0"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;FreeRTOS;Source;portable;MemMang"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;FreeRTOS APP Support"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Header Files;MCU peripheral config"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files"/>
-  <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;FreeRTOS APP Support"/>
   <ProjectSessionItem path="stm32g0_ZEGAR_FreeRTOS;stm32g0_ZEGAR_FreeRTOS;Source Files;MCU peripheral config"/>
  </Project>
  <Register1>
@@ -86,11 +78,15 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="6" y="380" useTextEdit="1" path="main.c" left="0" selected="1" top="331" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="15" useTextEdit="1" path="ds18b20.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="25" useTextEdit="1" path="ds18b20.c" left="0" top="9" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="23" y="36" useTextEdit="1" path="ds18b20.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="180" useTextEdit="1" path="ds18b20.c" left="0" top="137" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="45" y="175" useTextEdit="1" path="STM32G0xx/CMSIS/Device/Include/stm32g0xx.h" left="0" top="150" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="15" useTextEdit="1" path="timer_config.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="11" useTextEdit="1" path="timer_config.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="7" useTextEdit="1" path="timer_config.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="12" useTextEdit="1" path="delay.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="11" useTextEdit="1" path="delay.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="system_config.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="348" useTextEdit="1" path="main.c" left="0" selected="1" top="330" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.h" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>
