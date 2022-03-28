@@ -108,3 +108,11 @@ GPIOC->MODER &= ~GPIO_MODER_MODE6_1; //MODE6 -> 0b01
 
 }
 
+
+void SET_PULLUP(void){
+
+/*set Pull-Up (0b01)*/
+GPIOC->PUPDR |= GPIO_PUPDR_PUPD6_0 ;
+GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD6_1;
+
+}

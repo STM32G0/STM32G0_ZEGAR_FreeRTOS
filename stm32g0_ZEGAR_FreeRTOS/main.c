@@ -280,7 +280,7 @@ void EXTI4_15_IRQHandler(void) {
   }
 }
 
-/*
+
 //obsługa przerwania dla Timer6
 void TIM6_DAC_LPTIM1_IRQHandler(void){
 
@@ -288,7 +288,7 @@ TIM6->CR1 &= ~TIM_CR1_CEN; // disable Counter
 TIM6->SR  &=  ~TIM_SR_UIF ; //clear interrupt flag
 TIM6->CNT = 0;
 /*********************** Machine STATE RESET ***************************/
-/*
+
 switch (STATE_DS18B20_Reset) {
 
 case state0: 
@@ -302,7 +302,7 @@ break;
 
 case state1: 
 SET_Input_Wire2();
-//SET_PC6_PullUP();
+SET_PULLUP();
 TIM6->ARR = (70 - 1);  // ARR value 1 us per tick , for 70 us ARR = (70- 1) 
 STATE_DS18B20_Reset = state2 ;
 TIM6->CNT = 0;
@@ -332,7 +332,7 @@ break;
 }
 
 /*********************** Machine STATE Write Bit ***************************/
-/*
+
 switch (STATE_DS18B20_WriteBit) {
 
 case state0: 
@@ -373,7 +373,7 @@ break;
 }
 
 /*********************** Machine STATE Read Bit ***************************/
-/*
+
 switch (STATE_DS18B20_ReadBit) {
 
 
@@ -385,4 +385,4 @@ break;
 
         }
         
-        */
+        
