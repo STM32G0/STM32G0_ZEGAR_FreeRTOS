@@ -112,7 +112,7 @@ void vDisplayTask(void *pvParameters) {
 
 /* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
 
-      if (xTaskNotifyWaitIndexed(0, // Wait for notification number 1
+      if(xTaskNotifyWaitIndexed(0, // Wait for notification number 1
               0x00,                 // Don't clear any bits on entry.
               0xFFFFFFFF,           // Clear ALL bits on exit
               &notificationvalue_0, // Receives the notification value.
@@ -148,11 +148,11 @@ void vDisplayTask(void *pvParameters) {
 		{
 			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
 			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // wyswietl cyfre dla jednosci
-			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // wygas wyswietlacz dziesistek
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // wygas wyswietlacz na pozycji dziesiastek
 
 		}
 
-		// wyswietlanie temperatury  po przecinku (jedna cyfra)
+		/* wyswietlanie temperatury  po przecinku (jedna cyfra) */
 
 		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
       }
@@ -185,7 +185,7 @@ void vTouchTask(void *pvParameters) {
         if (touch_SELECT_counter > 1) {
           touch_SELECT_counter = 0;
         }
-        xTaskNotify(xDisplayTaskHandle, (1 << touch_SELECT_counter++), eSetBits); // wyslij do xDisplayTask flag, bit 0 lub bit 1 ustawiony
+        xTaskNotifyIndexed(xDisplayTaskHandle, 0, (1 << touch_SELECT_counter++), eSetBits); // wyslij do xDisplayTask flag, bit 0 lub bit 1 ustawiony
       }
 
       /*************** Reakcja na dotyk pola CS2 - UP *******************/
