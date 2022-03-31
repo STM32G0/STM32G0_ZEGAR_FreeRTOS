@@ -11,11 +11,10 @@ IDE   : SEGGER Embedded Studio
 #include <stdlib.h>
 #include "delay.h"
 
-void delay_us(uint16_t us) {
-  uint16_t start = TIM6->CNT;
-  while((uint16_t)(TIM6->CNT - start) <= us);
-  }
-
+void delay_us(uint16_t us){
+  TIM6->CNT = 0;
+ while (TIM6->CNT < us);
+}
 
 void delay_ms(uint16_t ms)
 {

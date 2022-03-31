@@ -103,16 +103,11 @@ EXTI->FTSR1 |= EXTI_FTSR1_FT4 ;
 EXTI->IMR1 |= EXTI_IMR1_IM4 ;
 
 /********** PC6 set Out for DS18B20 **********************/
+GPIOC->MODER |=  GPIO_MODER_MODE6_0; //MODE6 -> 0b01
 GPIOC->MODER &= ~GPIO_MODER_MODE6_1; //MODE6 -> 0b01
 
+/* PC6 set High */
+GPIOC->BSRR |= GPIO_BSRR_BS6;
 
 }
 
-
-void SET_PULLUP(void){
-
-/*set Pull-Up (0b01)*/
-GPIOC->PUPDR |= GPIO_PUPDR_PUPD6_0 ;
-GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD6_1;
-
-}

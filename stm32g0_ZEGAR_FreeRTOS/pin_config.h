@@ -6,7 +6,7 @@ IDE   : SEGGER Embedded Studio
 ******************************************/
 
 #ifndef PIN_CONFIG_H
-#define  PIN_CONFIG_H
+#define PIN_CONFIG_H
 
 void PIN_MANAGER_Initialize(void);
 /* definitions for led on PC15 */
@@ -23,6 +23,5 @@ void PIN_MANAGER_Initialize(void);
 #define CS_SetHigh()            (GPIOA->BSRR |= GPIO_BSRR_BS3) 
 #define CS_SetLow()             (GPIOA->BSRR |= GPIO_BSRR_BR3) 
 
-void SET_PULLUP(void);
 
 #endif /*PIN_CONFIG_H*/

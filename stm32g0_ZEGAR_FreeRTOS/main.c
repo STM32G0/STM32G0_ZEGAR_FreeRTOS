@@ -29,11 +29,7 @@ IDE   : SEGGER Embedded Studio
 static void prvSetupHardware(void);
 // uint8_t kropka_int_flag = 0 ;
 /* Machine State for DS18B20 */
-typedef enum {state0 = 0,state1,state2,state3,stateEnd} state_t; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
-volatile state_t STATE_DS18B20_Reset = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
-volatile state_t STATE_DS18B20_WriteBit = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler	
-volatile state_t STATE_DS18B20_ReadBit = stateEnd ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler		
-volatile uint8_t bit ;
+
 
 int main(void) {
   /* FreeRTOS APP support */
@@ -57,7 +53,7 @@ int main(void) {
 static void prvSetupHardware(void) {
   /* It's place to clock and memory configuration */
   SystemInit();
-  /* zwoka na ustabilizowanie si zegarow / koniecznie musi by */
+  /* zwoka na ustabilizowanie sie zegarow / koniecznie musi by */
   for (uint32_t i = 0; i < 5000; i++) {asm("nop");}
   
   SYSTEM_MANAGER_Initialize();
@@ -96,7 +92,8 @@ void vDisplayTask(void *pvParameters) {
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
   uint32_t minute_segment_mask = 1; // set bit no 0 (0...7)
   uint32_t hour_segment_mask = 2;   // set bit no 1 (0...7)
-  uint32_t notificationvalue = 0;
+  uint32_t notificationvalue_0 = 0;
+  uint32_t notificationvalue_1 = 0;
 
   for (;;) {
 
@@ -105,26 +102,35 @@ void vDisplayTask(void *pvParameters) {
 #ifdef debug
       printf("Hello vDisplayTask\n");
 #endif
-      /* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
 
-      notificationvalue = ulTaskNotifyTake(pdTRUE, 0); // Timeout = 0 - bez blokowania zadania
-#ifdef debug
-      printf("notificationvalue %d\n", notificationvalue);
-#endif
       /* display minutes*/
-      max7219.Display_MIN(MCP79410_Time_DisplayTask.MIN); // display minutes
-
-      if (notificationvalue & minute_segment_mask) { // mignicie segmentem minut, dla potrzeb sygnalizacji ustawiania czasu
-        /* wygas segmenty dla minut */
-        max7219.ClearDisplay_MIN();
-      }
-
-      /* display hour*/
+      max7219.Display_MIN(MCP79410_Time_DisplayTask.MIN);   // display minutes
+      /* display hour */
       max7219.Display_HOUR(MCP79410_Time_DisplayTask.HOUR); // display hour
 
-      if (notificationvalue & hour_segment_mask) { // mignicie segmentem godzin, dla potrzeb sygnalizacji ustawiania czasu
-        /* wygas segmenty dla godzin */
-        max7219.ClearDisplay_HOUR();
+/* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
+/* Task Notify from vTemperatureTask */
+      if (xTaskNotifyWaitIndexed(0, // Wait for notification number 1
+              0x00,                 // Don't clear any bits on entry.
+              0xFFFFFFFF,           // Clear ALL bits on exit
+              &notificationvalue_0, // Receives the notification value.
+              (TickType_t)0))       // Timeout = 0 - bez blokowania zadania
+      {
+        if (notificationvalue_0 & minute_segment_mask) { // mignicie segmentem minut, dla potrzeb sygnalizacji ustawiania czasu
+          /* wygas segmenty dla minut */
+          max7219.ClearDisplay_MIN();
+        }
+
+        if (notificationvalue_0 & hour_segment_mask) { // mignicie segmentem godzin, dla potrzeb sygnalizacji ustawiania czasu
+          /* wygas segmenty dla godzin */
+          max7219.ClearDisplay_HOUR();
+        }
+      }
+
+      /* Task Notify from vTemperatureTask */
+      /* Use the 1th notification */
+      if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
+        max7219.SendToDevice(Device1, MAX7219_DIGIT2, dec2bcd(DStemp_Ulamek)); // wyswietl temperature po przecinku , jedna cyfra
       }
     }
   }
@@ -132,7 +138,6 @@ void vDisplayTask(void *pvParameters) {
 
 void vTouchTask(void *pvParameters) {
 
-  time_t MCP79410_Time_TouchTask = {0, 0, 0};
   uint8_t touch_SELECT_counter = 0;
   uint32_t notificationvalue = 0;
   uint32_t tasknotify_mask = 1; // set bit no 0 (0...7)
@@ -173,14 +178,9 @@ void vTouchTask(void *pvParameters) {
           }
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
-          MCP79410_Time_TouchTask.MIN = dec2bcd(minuty);
           // zeruj sekundy w MCP79410
-          // wyslij do kolejki xQueueClockTask minuty, kolejka jest odbierana w zadaniu vDisplayTask
-          if (xQueueClockTask != NULL) {                                                  // wysylamy do kolejki dane (struktura) o czasie, pobrane z MCP79410,
-            xQueueSend(xQueueClockTask, (void *)&MCP79410_Time_TouchTask, (TickType_t)0); // Timeout = 0 - bez blokowania zadania
-          }
-         // max7219.Display_MIN(dec2bcd(minuty)); // display minutes
-
+          max7219.Display_MIN(dec2bcd(minuty)); // display minutes
+                   
           break;
 
         case selectHour: // zmieniamy godziny
@@ -233,20 +233,31 @@ void vTouchTask(void *pvParameters) {
 }
 
 void vTemperatureTask(void *pvParameters) {
- STATE_DS18B20_Reset = state0 ; //for interrupt TIM6_DAC_LPTIM1_IRQHandler
- /* Interrupt call TIM6 */
-  TIM6->ARR = (2 - 1);  // ARR value 1/16 us per tick = 1us
-  TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-  TIM6->CNT = 0;
+  static bool flags = 0;
+
   for (;;) {
-    
-  vTaskDelay( 2500 / portTICK_RATE_MS ); // co 2.5 s bedziemy odczytywac temperature
+
+    if (flags == true) {
+      
+      temperatura();
+       
+       xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semafor dla vDisplayTask - wyswietlanie temperatury
+       if (DStemp_Znak ){}// jesli znak temperatury ujemny , zaimplementuj miganie co 1 s polem temperatury
+
+       flags = 0; //triger do przelaczania Convert/Read Temperature
+    }
+
+    if (flags == false) {
+      
+      ConvertTemperature();
+      
+      flags = 1; //triger do przelaczania Convert/Read Temperature
+    }
 
 #ifdef debug
-      printf("Hello vTemperatureTask\n");
+    printf("Hello vTemperatureTask\n");
 #endif
-     
-      
+    vTaskDelay(2500 / portTICK_RATE_MS); // co 2.5 s bedziemy odczytywac temperature
   }
 }
 
@@ -281,108 +292,6 @@ void EXTI4_15_IRQHandler(void) {
 }
 
 
-//obsługa przerwania dla Timer6
-void TIM6_DAC_LPTIM1_IRQHandler(void){
 
-TIM6->CR1 &= ~TIM_CR1_CEN; // disable Counter
-TIM6->SR  &=  ~TIM_SR_UIF ; //clear interrupt flag
-TIM6->CNT = 0;
-/*********************** Machine STATE RESET ***************************/
-
-switch (STATE_DS18B20_Reset) {
-
-case state0: 
-SET_Output_Wire2();
-SET_Low_Wire2() ;
-TIM6->ARR = (480 - 1);  // ARR value 1 us per tick , for 480 us ARR = (480 - 1)
-STATE_DS18B20_Reset = state1 ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case state1: 
-SET_Input_Wire2();
-SET_PULLUP();
-TIM6->ARR = (70 - 1);  // ARR value 1 us per tick , for 70 us ARR = (70- 1) 
-STATE_DS18B20_Reset = state2 ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case state2: 
-if (TEST_Input_Wire2() == 0) { // 0 - Slave OK, 1 - Slave not response
-LED2_SetHigh() ;
-}
-TIM6->ARR = (410 - 1);  // ARR value 1 us per tick , for 410 us ARR = (410 - 1)
-STATE_DS18B20_Reset = state3 ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case state3: 
-TIM6->CR1 &= ~TIM_CR1_CEN; // disable Counter
-TIM6->CNT = 0;
-STATE_DS18B20_Reset = stateEnd ;
-break;
-
-case stateEnd: 
-// do nothing
-break;
-
-}
-
-/*********************** Machine STATE Write Bit ***************************/
-
-switch (STATE_DS18B20_WriteBit) {
-
-case state0: 
-SET_Output_Wire2();
-SET_Low_Wire2() ;
-TIM6->ARR = (2 - 1);  // ARR value 1 us per tick , for 1 us ARR = (2 - 1)
-STATE_DS18B20_WriteBit = state1 ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case state1: 
-if(bit){
-SET_High_Wire2();
-}
-else
-{
-SET_Low_Wire2();
-} 
-
-TIM6->ARR = (64 - 1);  // ARR value 1 us per tick , for 64 us ARR = (64- 1) 
-STATE_DS18B20_WriteBit = state2 ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case state2: 
-SET_Input_Wire2();
-TIM6->ARR = (10 - 1);  // ARR value 1 us per tick , for 10 us ARR = (10 - 1)
-STATE_DS18B20_WriteBit = stateEnd ;
-TIM6->CNT = 0;
-TIM6->CR1 |= TIM_CR1_CEN; // Enable the Counter
-break;
-
-case stateEnd: 
-// do nothing
-break;
-}
-
-/*********************** Machine STATE Read Bit ***************************/
-
-switch (STATE_DS18B20_ReadBit) {
-
-
-
-case stateEnd: 
-// do nothing
-break;
-}
-
-        }
         
         
