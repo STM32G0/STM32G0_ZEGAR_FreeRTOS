@@ -94,6 +94,8 @@ void vDisplayTask(void *pvParameters) {
   uint32_t hour_segment_mask = 2;   // set bit no 1 (0...7)
   uint32_t notificationvalue_0 = 0;
   uint32_t notificationvalue_1 = 0;
+  uint16_t cyfra_dziesiatki ;       // zmienna pomocnicza celem wydobycia cyfry do wyswietlania temperatury na pozycji dziesistek
+  uint16_t cyfra_jednosci ;         // zmienna pomocnicza celem wydobycia cyfry do wyswietlania temperatury na pozycji jednosci
 
   for (;;) {
 
@@ -109,7 +111,7 @@ void vDisplayTask(void *pvParameters) {
       max7219.Display_HOUR(MCP79410_Time_DisplayTask.HOUR); // display hour
 
 /* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
-/* Task Notify from vTemperatureTask */
+
       if (xTaskNotifyWaitIndexed(0, // Wait for notification number 1
               0x00,                 // Don't clear any bits on entry.
               0xFFFFFFFF,           // Clear ALL bits on exit
@@ -130,7 +132,29 @@ void vDisplayTask(void *pvParameters) {
       /* Task Notify from vTemperatureTask */
       /* Use the 1th notification */
       if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
-        max7219.SendToDevice(Device1, MAX7219_DIGIT2, dec2bcd(DStemp_Ulamek)); // wyswietl temperature po przecinku , jedna cyfra
+        
+        if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) // czy jest cyfra na pozycji dziesiatek do wyswietlania jesli tak to wyswietl jesli nie to nic nie wyswietlaj
+				{
+      /* wyodrebnienie cyfry dziesiatek i jednosci dla temperatury wyswietlanej przed przecinkiem */
+			cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // wyliczenie cyfry dziesiatek
+			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // wyliczenie cyfry jednosci
+
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // wyswietl cyfre i kropke
+
+		}
+
+		if (DStemp_Calkowita < 10 ) // czy jest cyfra na pozycji jednostek do wyswietlania jesli tak to wyswietl jesli nie to nic nie wyswietlaj
+		{
+			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // wyswietl cyfre dla jednosci
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // wygas wyswietlacz dziesistek
+
+		}
+
+		// wyswietlanie temperatury  po przecinku (jedna cyfra)
+
+		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
       }
     }
   }
@@ -143,8 +167,7 @@ void vTouchTask(void *pvParameters) {
   uint32_t tasknotify_mask = 1; // set bit no 0 (0...7)
   int8_t minuty = 0;            // przy ustawianiu czasu schodzimy na wartosci ujemne
   int8_t godzina = 0;
-  enum { selectMinute = 1,
-    selectHour = 2 };
+  enum { selectMinute = 1, selectHour = 2 };
 
   for (;;) {
     /* Task Notify from intrrupt EXTI4_15_IRQHandler */
@@ -153,7 +176,7 @@ void vTouchTask(void *pvParameters) {
         &notificationvalue, /* Receives the notification value. */
         portMAX_DELAY);     /* Block indefinitely. */
 
-    if (notificationvalue & tasknotify_mask) {                                                       // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
+    if (notificationvalue & tasknotify_mask) { // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
       cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, musi byc na poczatku inaczej zmiana kontekstu moze spowodowac opoznienie kasowania flagi
 
       /**************** Reakcja na dotyk pola CS3 - SELECT ***************/
@@ -242,7 +265,7 @@ void vTemperatureTask(void *pvParameters) {
       temperatura();
        
        xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semafor dla vDisplayTask - wyswietlanie temperatury
-       if (DStemp_Znak ){}// jesli znak temperatury ujemny , zaimplementuj miganie co 1 s polem temperatury
+       //if (DStemp_Znak ){}// jesli znak temperatury ujemny , zaimplementuj miganie co 1 s polem temperatury
 
        flags = 0; //triger do przelaczania Convert/Read Temperature
     }
@@ -257,7 +280,7 @@ void vTemperatureTask(void *pvParameters) {
 #ifdef debug
     printf("Hello vTemperatureTask\n");
 #endif
-    vTaskDelay(2500 / portTICK_RATE_MS); // co 2.5 s bedziemy odczytywac temperature
+    vTaskDelay(4500 / portTICK_RATE_MS); // co 2.5 s bedziemy odczytywac temperature
   }
 }
 

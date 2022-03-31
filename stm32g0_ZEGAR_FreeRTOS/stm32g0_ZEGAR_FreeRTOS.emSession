@@ -70,9 +70,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="153" filename="main.c"/>
-   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="177" filename="main.c"/>
-   <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="119" filename="main.c"/>
+   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="176" filename="main.c"/>
+   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="200" filename="main.c"/>
+   <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="121" filename="main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -85,8 +85,8 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="96" y="243" useTextEdit="1" path="main.c" left="0" selected="1" top="106" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="112" useTextEdit="1" path="ds18b20.c" left="0" top="84" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="26" y="169" useTextEdit="1" path="main.c" left="0" selected="1" top="158" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="112" useTextEdit="1" path="ds18b20.c" left="0" top="75" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.h" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>
