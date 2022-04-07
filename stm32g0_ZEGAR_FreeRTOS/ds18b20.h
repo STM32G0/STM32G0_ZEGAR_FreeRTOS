@@ -8,30 +8,35 @@ IDE   : SEGGER Embedded Studio
 #ifndef DS18B20_H_
 #define DS18B20_H_
 #include <stm32g071xx.h>
-
-#define SET_High_Wire2()                (GPIOC->BSRR |= GPIO_BSRR_BS6)  // PC6 podaj na wyjciu stan wysoki(zasilanie do parasite na czas konwersji)
-#define SET_Low_Wire2()                 (GPIOC->BSRR |= GPIO_BSRR_BR6)  //PC6 podaj na wyjciu stan niski
-#define TEST_Input_Wire2()              (GPIOC->IDR & GPIO_IDR_ID6) // PC6 pin status
+#include <stdint.h>
 
 #define	DS18B20_CONVERT_T	0x44
 #define	DS18B20_READ		0xBE
 #define	DS18B20_SKIP_ROM        0xCC
 
- extern bool DStemp_Znak ; 
- extern uint16_t DStemp_Calkowita ; 
- extern uint16_t DStemp_Ulamek ;   
-
- // obszar deklaracji funkcji udostepnionych dla innych moduw
-
-bool ResetPulse(void) ;
-void WriteBit(bool bit);
-bool ReadBit(void);
-void WriteByte(uint8_t byte);
-uint8_t ReadByte(void);
-void temperatura(void);	
-void ConvertTemperature(void);
-
  
+ typedef  struct {
+uint16_t DStemp;
+bool DStemp_Znak;
+uint16_t DStemp_Calkowita;
+uint16_t DStemp_Ulamek;
+ } temperatureDevice_t ;
+
+temperatureDevice_t Wire1 ;
+temperatureDevice_t Wire2 ;
+
+
+void Set_WireHigh(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
+void Set_WireLow(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
+bool Read_Wire(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
+
+bool ResetPulse(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) ;
+void WriteBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, bool bit);
+bool ReadBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
+void WriteByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, uint8_t byte);
+uint8_t ReadByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
+void Temperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, temperatureDevice_t *TemperatureStructure);	
+void ConvertTemperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
 
 
 #endif /* DS18B20_H_ */

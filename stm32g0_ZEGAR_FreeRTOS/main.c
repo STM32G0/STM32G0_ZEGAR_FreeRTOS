@@ -53,7 +53,7 @@ int main(void) {
 static void prvSetupHardware(void) {
   /* It's place to clock and memory configuration */
   SystemInit();
-  /* zwoka na ustabilizowanie sie zegarow / koniecznie musi by */
+  /* The time delay for the clocks to stabilize / necessarily has to be */
   for (uint32_t i = 0; i < 5000; i++) {asm("nop");}
   
   SYSTEM_MANAGER_Initialize();
@@ -68,7 +68,7 @@ void vClockTask(void *pvParameters) {
   time_t MCP79410_Time_ClockTask = {0, 0, 0};
 
   for (;;) {
-/* semafor oddawany w przerwaniu EXTI4_15_IRQHandler*/
+/* semaphore returned in EXTI4_15_IRQHandler interrupt */
     if (xSemaphoreTake(xSemaphoreClockTask, portMAX_DELAY) == pdTRUE) {
 
 #ifdef debug
@@ -80,8 +80,8 @@ void vClockTask(void *pvParameters) {
       MCP79410_Time_ClockTask.MIN = mcp79410.getTime_MIN();
       MCP79410_Time_ClockTask.HOUR = mcp79410.getTime_HOUR();
       /* sekcja krytyczna end ??? */
-      if (xQueueClockTask != NULL) {// wysylamy do kolejki dane (struktura) o czasie, pobrane z MCP79410, 
-        xQueueSend(xQueueClockTask, (void *)&MCP79410_Time_ClockTask, (TickType_t)0); //Timeout = 0 - bez blokowania zadania
+      if (xQueueClockTask != NULL) {//  send the data to the queue , the data is taken from the MCP79410, we pack the data into a structure
+        xQueueSend(xQueueClockTask, (void *)&MCP79410_Time_ClockTask, (TickType_t)0); //Timeout = 0 - without blocking the task
       }
     }
   }
@@ -94,12 +94,12 @@ void vDisplayTask(void *pvParameters) {
   uint32_t hour_segment_mask = 2;   // set bit no 1 (0...7)
   uint32_t notificationvalue_0 = 0;
   uint32_t notificationvalue_1 = 0;
-  uint16_t cyfra_dziesiatki ;       // zmienna pomocnicza celem wydobycia cyfry do wyswietlania temperatury na pozycji dziesistek
-  uint16_t cyfra_jednosci ;         // zmienna pomocnicza celem wydobycia cyfry do wyswietlania temperatury na pozycji jednosci
+  uint16_t cyfra_dziesiatki ;       // auxiliary variable to extract the digit for displaying the temperature at the decimal position
+  uint16_t cyfra_jednosci ;         // auxiliary variable to extract the digit for the temperature display at the unity position
 
   for (;;) {
 
-    if (xQueueReceive(xQueueClockTask, &MCP79410_Time_DisplayTask, portMAX_DELAY) == pdPASS) { // pobierz dane (czas) z kolejki jeli s dostpne, zapisz je do struktury MCP79410_Time_DisplayTask
+    if (xQueueReceive(xQueueClockTask, &MCP79410_Time_DisplayTask, portMAX_DELAY) == pdPASS) { // get the data (time) from the queue if available, write it to the MCP79410_Time_DisplayTask structure
 /* mcp79410_time now contains a copy of MCP79410_Time_DisplayTask  . */
 #ifdef debug
       printf("Hello vDisplayTask\n");
@@ -110,21 +110,21 @@ void vDisplayTask(void *pvParameters) {
       /* display hour */
       max7219.Display_HOUR(MCP79410_Time_DisplayTask.HOUR); // display hour
 
-/* Task Notify nadawany z zadania vTouchTask do obslugi sygnalizacji ustawiania czasu*/
+/* Task Notify sent from vTouchTask to support signaling the time setting */
 
       if(xTaskNotifyWaitIndexed(0, // Wait for notification number 1
               0x00,                 // Don't clear any bits on entry.
               0xFFFFFFFF,           // Clear ALL bits on exit
               &notificationvalue_0, // Receives the notification value.
-              (TickType_t)0))       // Timeout = 0 - bez blokowania zadania
+              (TickType_t)0))       // Timeout = 0 - without blocking the task
       {
-        if (notificationvalue_0 & minute_segment_mask) { // mignicie segmentem minut, dla potrzeb sygnalizacji ustawiania czasu
+        if (notificationvalue_0 & minute_segment_mask) { // toggle of the minutes segment for signalling the time setting
           /* wygas segmenty dla minut */
           max7219.ClearDisplay_MIN();
         }
 
-        if (notificationvalue_0 & hour_segment_mask) { // mignicie segmentem godzin, dla potrzeb sygnalizacji ustawiania czasu
-          /* wygas segmenty dla godzin */
+        if (notificationvalue_0 & hour_segment_mask) { // toggle of the hour segment for signalling the time setting
+          /* off segments for hours */
           max7219.ClearDisplay_HOUR();
         }
       }
@@ -133,26 +133,26 @@ void vDisplayTask(void *pvParameters) {
       /* Use the 1th notification */
       if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
         
-        if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) // czy jest cyfra na pozycji dziesiatek do wyswietlania jesli tak to wyswietl jesli nie to nic nie wyswietlaj
+        if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) //  digit in the tens position to display ? if yes then display , if no then display nothing
 				{
-      /* wyodrebnienie cyfry dziesiatek i jednosci dla temperatury wyswietlanej przed przecinkiem */
-			cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // wyliczenie cyfry dziesiatek
-			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // wyliczenie cyfry jednosci
+      /* decimal and unity digit for temperature displayed before decimal point */
+			cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
+			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // calculation of the unity digit
 
 			max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // wyswietl cyfre i kropke
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
 
 		}
 
-		if (DStemp_Calkowita < 10 ) // czy jest cyfra na pozycji jednostek do wyswietlania jesli tak to wyswietl jesli nie to nic nie wyswietlaj
+		if (DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
 		{
 			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // wyswietl cyfre dla jednosci
-			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // wygas wyswietlacz na pozycji dziesiastek
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
 
 		}
 
-		/* wyswietlanie temperatury  po przecinku (jedna cyfra) */
+		/* Temperature display after decimal point (one digit) */
 
 		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
       }
@@ -165,7 +165,7 @@ void vTouchTask(void *pvParameters) {
   uint8_t touch_SELECT_counter = 0;
   uint32_t notificationvalue = 0;
   uint32_t tasknotify_mask = 1; // set bit no 0 (0...7)
-  int8_t minuty = 0;            // przy ustawianiu czasu schodzimy na wartosci ujemne
+  int8_t minuty = 0;            // when setting the time, we can set negative values
   int8_t godzina = 0;
   enum { selectMinute = 1, selectHour = 2 };
 
@@ -176,73 +176,72 @@ void vTouchTask(void *pvParameters) {
         &notificationvalue, /* Receives the notification value. */
         portMAX_DELAY);     /* Block indefinitely. */
 
-    if (notificationvalue & tasknotify_mask) { // czy bit nr 0 TaskNotification wysłany z przerwania EXTI4_15_IRQHandler jest ustawiony
-      cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, musi byc na poczatku inaczej zmiana kontekstu moze spowodowac opoznienie kasowania flagi
+    if (notificationvalue & tasknotify_mask) { // Bit No. 0 of the TaskNotification is set ? . Bit Sent from EXTI4_15_IRQHandler interrupt
+      cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, must be at the beginning otherwise a change of context may cause a delay in clearing the flag
 
       /**************** Reakcja na dotyk pola CS3 - SELECT ***************/
-      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS3_SELECT) { // dotyk pola CS3 "SELECT" ?
+      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS3_SELECT) { // touch field CS3 "SELECT" ?
 
         if (touch_SELECT_counter > 1) {
           touch_SELECT_counter = 0;
         }
-        xTaskNotifyIndexed(xDisplayTaskHandle, 0, (1 << touch_SELECT_counter++), eSetBits); // wyslij do xDisplayTask flag, bit 0 lub bit 1 ustawiony
+        xTaskNotifyIndexed(xDisplayTaskHandle, 0, (1 << touch_SELECT_counter++), eSetBits); // send to xDisplayTask flag, bit 0 or bit 1 set
       }
 
       /*************** Reakcja na dotyk pola CS2 - UP *******************/
-      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS2_UP) { // dotyk pola CS2 "UP" ?
+      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS2_UP) { // touch field CS2 "UP" ?
         switch (touch_SELECT_counter) {
 
-        case selectMinute: // zmieniamy minuty
+        case selectMinute: // // set the minutes
 
-          minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
+          minuty = bcd2dec(mcp79410.getTime_MIN()); // Take an minutes from MCP79410 and decode from BCD to DEC
           minuty++;
           if (minuty > 59) {
             minuty = 0;
           }
 
           mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
-          // zeruj sekundy w MCP79410
+          // zeruj sekundy w MCP79410 , zaimplementuj
           max7219.Display_MIN(dec2bcd(minuty)); // display minutes
                    
           break;
 
-        case selectHour: // zmieniamy godziny
+        case selectHour: // // set the hour
 
-          godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
+          godzina = bcd2dec(mcp79410.getTime_HOUR()); // Take an hour from MCP79410 and decode from BCD to DEC
           godzina++;
           if (godzina > 23) {
             godzina = 0;
           }
-          mcp79410.setTime_HOUR(godzina); // ustaw godzine w MCP79410
-          // wyslij do kolejki xQueueClockTask godzine
+          mcp79410.setTime_HOUR(godzina); // set hour in MCP79410
           max7219.Display_HOUR(dec2bcd(godzina)); // display hour
 
           break;
         }
       }
 
-      /******************* Reakcja na dotyk pola CS1 - DOWN ********************/
-      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS1_DOWN) { // dotyk pola CS1 "DOWN" ?
+      /******************* Response to field touch CS1 - DOWN ********************/
+      if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS1_DOWN) { // touch field CS1 "DOWN" ?
         switch (touch_SELECT_counter) {
-        case selectMinute:                          // zmieniamy minuty
-          minuty = bcd2dec(mcp79410.getTime_MIN()); // pobierz minuty z MCP79410 i zdekoduj z BCD na DEC
+        case selectMinute:                          // set the minutes
+          minuty = bcd2dec(mcp79410.getTime_MIN()); // Take an minutes from MCP79410 and decode from BCD to DEC
           minuty--;
           if (minuty < 0) {
             minuty = 59;
           }
 
-          mcp79410.setTime_MIN(minuty); // ustaw minuty w MCP79410
+          mcp79410.setTime_MIN(minuty); // set minutes in MCP79410
           // zeruj sekundy w MCP79410
           max7219.Display_MIN(dec2bcd(minuty)); // display minutes
           break;
 
-        case selectHour:                              // zmieniamy godziny
-          godzina = bcd2dec(mcp79410.getTime_HOUR()); // pobierz godzine z MCP79410 i zdekoduj z BCD na DEC
+        case selectHour:                              // set the hour
+          godzina = bcd2dec(mcp79410.getTime_HOUR()); // Take an hour from MCP79410 and decode from BCD to DEC
           godzina--;
           if (godzina < 0) {
             godzina = 23;
           }
-          mcp79410.setTime_HOUR(godzina);         // ustaw godzine w MCP79410
+          mcp79410.setTime_HOUR(godzina);         // Set the hour time in the MCP79410
           max7219.Display_HOUR(dec2bcd(godzina)); // display hour
           break;
         }
@@ -261,26 +260,28 @@ void vTemperatureTask(void *pvParameters) {
   for (;;) {
 
     if (flags == true) {
-      
-      temperatura();
+      taskENTER_CRITICAL();
+      Temperature(GPIOC , 6); //PC6 Wire2
+      taskEXIT_CRITICAL();
        
-       xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semafor dla vDisplayTask - wyswietlanie temperatury
+       xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
        //if (DStemp_Znak ){}// jesli znak temperatury ujemny , zaimplementuj miganie co 1 s polem temperatury
 
-       flags = 0; //triger do przelaczania Convert/Read Temperature
+       flags = 0; //trigger to toggle Convert/Read Temperature
     }
 
     if (flags == false) {
+      taskENTER_CRITICAL();
+      ConvertTemperature(GPIOC , 6); //PC6 Wire2
+      taskEXIT_CRITICAL();
       
-      ConvertTemperature();
-      
-      flags = 1; //triger do przelaczania Convert/Read Temperature
+      flags = 1; //trigger to toggle Convert/Read Temperature
     }
 
 #ifdef debug
     printf("Hello vTemperatureTask\n");
 #endif
-    vTaskDelay(4500 / portTICK_RATE_MS); // co 2.5 s bedziemy odczytywac temperature
+    vTaskDelay(4500 / portTICK_RATE_MS); // Temperature reading , every 2.5 seconds
   }
 }
 
@@ -306,7 +307,7 @@ void EXTI4_15_IRQHandler(void) {
   EXTI->FPR1 |= EXTI_FPR1_FPIF4; // clear pending  
   BaseType_t xHigherPriorityTaskTouchWoken = pdFALSE;  
    
-    xTaskNotifyFromISR(xTouchTaskHandle, ( 1 << 0 ), eSetBits, &xHigherPriorityTaskTouchWoken ); // wyślij do xTouchTask ustawiony bit 0 czyli warotsc 1
+    xTaskNotifyFromISR(xTouchTaskHandle, ( 1 << 0 ), eSetBits, &xHigherPriorityTaskTouchWoken ); // send to xTouchTask bit 0 - value set 1
     /* If xHigherPriorityTaskWoken was set to true you
         we should yield.  The actual macro used here is
         port specific. */

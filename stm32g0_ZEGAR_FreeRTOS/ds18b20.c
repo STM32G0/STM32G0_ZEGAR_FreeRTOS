@@ -14,20 +14,33 @@ IDE   : SEGGER Embedded Studio
 #include "pin_config.h"
 #include "max7219_interface.h"
 
+#define debug // Semihosting on/off
 
-uint16_t DStemp ; //*************poaczenie LSB + MSB w jedn zmienn
-bool DStemp_Znak ; //*************tutaj badamy znak temperatury
-uint16_t DStemp_Calkowita ; //*************wydobywamy cz cakowit z DStemp
-uint16_t DStemp_Ulamek ; //*************wydobywamy cz uamkow (po przecinku) z DStemp
+temperatureDevice_t Wire1 ;
+temperatureDevice_t Wire2 ;
 
-bool ResetPulse(void) // resetujemy magistrale , czekamy na impuls PRESENCE
+/* Functions for 1-Wire operation */
+void Set_WireHigh(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
+GPIOx->BSRR |= (0x1UL << GPIO_Pin_x) ;
+}
+
+void Set_WireLow(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
+GPIOx->BRR |= (0x1UL << GPIO_Pin_x) ;
+}
+
+bool Read_Wire(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x){
+return (GPIOx->IDR & (0x1UL << GPIO_Pin_x));
+}
+
+
+bool ResetPulse(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) // Reset the bus, wait for the PRESENCE pulse
 {
   bool result = false;
-  SET_Low_Wire2();
+  Set_WireLow(GPIOx , GPIO_Pin_x); 
   delay_us(480);  
-  SET_High_Wire2();
+  Set_WireHigh(GPIOx , GPIO_Pin_x);
   delay_us(70);
-   if (TEST_Input_Wire2() == 0) { // 0 - Slave OK, 1 - Slave not response
+   if (Read_Wire(GPIOx , GPIO_Pin_x) == 0) { // 0 - Slave OK, 1 - Slave not response
       result = true;
       }
   delay_us(410);
@@ -35,84 +48,97 @@ bool ResetPulse(void) // resetujemy magistrale , czekamy na impuls PRESENCE
 }
 
 
-void WriteBit(bool bit) {
+void WriteBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, bool bit) {
   if (bit) {
     /* Write '1' bit */
-    SET_Low_Wire2();
+    Set_WireLow(GPIOx , GPIO_Pin_x);
     delay_us(6);
-    SET_High_Wire2();
+    Set_WireHigh(GPIOx , GPIO_Pin_x);
     delay_us(64);
   } else {
     /* Write '0' bit */
-    SET_Low_Wire2();
+    Set_WireLow(GPIOx , GPIO_Pin_x);
     delay_us(60);
-    SET_High_Wire2();
+    Set_WireHigh(GPIOx , GPIO_Pin_x);
     delay_us(10);
   }
 }
 
-bool ReadBit(void) {
+bool ReadBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
   bool result;
-  SET_Low_Wire2();
+  Set_WireLow(GPIOx , GPIO_Pin_x);
   delay_us(6);
-  SET_High_Wire2();
+  Set_WireHigh(GPIOx , GPIO_Pin_x);
   delay_us(9);
-  result = TEST_Input_Wire2();
+  result = Read_Wire(GPIOx , GPIO_Pin_x);
   delay_us(55);
   return result;
 }
 
-void WriteByte(uint8_t byte) {
+void WriteByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, uint8_t byte) {
   for (uint8_t i = 0; i < 8; i++) {
-    WriteBit(byte & 0x01);
+    WriteBit(GPIOx , GPIO_Pin_x, (byte & 0x01));
     /* shift the byte for the next bit */
     byte >>= 1;
   }
 }
 
-uint8_t ReadByte(void) {
+uint8_t ReadByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
   uint8_t result = 0;
   for (uint8_t i = 0; i < 8; i++) {
     /* shift the result to get it read for the next bit */
     result >>= 1;
     /* if result is one , then set MS bit */
-    if (ReadBit())
+    if (ReadBit(GPIOx , GPIO_Pin_x))
       result |= 0x80;
   }
   return result;
 }
 
-void ConvertTemperature(void) {
-  if (ResetPulse()) {             // czy czujnik zgasza gotowo do dzialania
-    //****************************************START KONWERSJI*****************************************************
-    WriteByte(DS18B20_SKIP_ROM);  // skip ROM
-    WriteByte(DS18B20_CONVERT_T); // CONVERT T
+void ConvertTemperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
+  if (ResetPulse(GPIOx , GPIO_Pin_x)) { // sensor ready for operation ?
+    //**************************************** CONVERSION TEMPERATURE START *****************************************************
+    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_SKIP_ROM);  // skip ROM
+    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_CONVERT_T); // CONVERT T
   }
 }
 
-void temperatura(void) { // glowna funkcja wyliczajca temperatur, jako parametr podajemy numer czujnika WE1...WE2 ...
+/* function calculating the temperature */
+void Temperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, temperatureDevice_t *TemperatureStructure) { 
 
-  static uint8_t temp1 = 0, temp2 = 0;
+  uint8_t temp1 = 0, temp2 = 0;
+  uint16_t DStemp = 0; // merge into one variable (LSB + MSB) 
+  bool DStemp_Znak = false; // temperature sign
+  uint16_t DStemp_Calkowita = 0; // extraction of the total with DStemp
+  uint16_t DStemp_Ulamek = 0 ; // extraction of fractional  with DStemp 
 
-  if (ResetPulse()) { // czy czujnik zgasza gotowo do dzialania
+  if (ResetPulse(GPIOx , GPIO_Pin_x)) { // sensor ready for operation ?
 
-    //*****************************************START ODCZYTU TEMPERATURY******************************************
-    WriteByte(DS18B20_SKIP_ROM); // skip ROM
-    WriteByte(DS18B20_READ);     // READ SCRATCHPAD
-    temp1 = ReadByte();          // odczytanie LSB
-    temp2 = ReadByte();          // odczytanie MSB
-    ResetPulse();                // konczymy odczyt, reszta bajtow nas nie interesuje
+    //***************************************** START OF TEMPERATURE READING ******************************************
+    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_SKIP_ROM); // skip ROM
+    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_READ);     // READ SCRATCHPAD
+    temp1 = ReadByte(GPIOx , GPIO_Pin_x);            // reading the LSB
+    temp2 = ReadByte(GPIOx , GPIO_Pin_x);            // reading the MSB
+    ResetPulse(GPIOx , GPIO_Pin_x);                  // finish reading, we are not interested in the rest of the bytes
 
-    DStemp = (temp2 << 8) | temp1; // laczymy starszy bajt i modszy w jeden kawaek
-    DStemp_Znak = temp2 >> 7;      // wydobywamy info o znaku temperatury
+    DStemp = (temp2 << 8) | temp1; // merge the MSB byte and the LSB byte into one word
+    DStemp_Znak = temp2 >> 7;      // extract information about the temperature sign
 
     if (DStemp_Znak) {
-      DStemp = ~DStemp + 1; // wycigamy warto bezwgldn z liczby ujemnej w kodzie U2
+      DStemp = ~DStemp + 1; // extract the absolute value from a negative number in U2 code
     }
-    DStemp_Calkowita = (uint8_t)((DStemp >> 4) & 0x7F);       // przesuwamy o 4 bity i maskujemy
-    DStemp_Ulamek = (uint8_t)(((DStemp & 0xF) * 625) / 1000); // jedna cyfra po przecinku, jesli chcemy 2 cyfry do dzielimy przez 100
+    DStemp_Calkowita = (uint8_t)((DStemp >> 4) & 0x7F);       // shift by 4 bits and mask
+    DStemp_Ulamek = (uint8_t)(((DStemp & 0xF) * 625) / 1000); // One digit after the decimal point. If you want two digits to divide by 100
+
+    TemperatureStructure->DStemp = DStemp;
+    TemperatureStructure->DStemp_Calkowita = DStemp_Calkowita;
+    TemperatureStructure->DStemp_Ulamek = DStemp_Ulamek ;
+    TemperatureStructure->DStemp_Znak = DStemp_Znak ;
+
+
     
-    //printf("Temperatura: %d,%d \n", DStemp_Calkowita, DStemp_Ulamek);
-    
+    #ifdef debug
+    printf("Temperatura: %d,%d \n", DStemp_Calkowita, DStemp_Ulamek);
+    #endif
   }
 }

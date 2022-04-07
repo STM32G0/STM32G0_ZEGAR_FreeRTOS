@@ -102,12 +102,19 @@ EXTI->FTSR1 |= EXTI_FTSR1_FT4 ;
 /*set EXTI Interrupt no-masked for PB4*/
 EXTI->IMR1 |= EXTI_IMR1_IM4 ;
 
-/********** PC6 set Out for DS18B20 **********************/
+/********** PC6 set Out for DS18B20 WIRE2 **********************/
 GPIOC->MODER |=  GPIO_MODER_MODE6_0; //MODE6 -> 0b01
 GPIOC->MODER &= ~GPIO_MODER_MODE6_1; //MODE6 -> 0b01
 
 /* PC6 set High */
 GPIOC->BSRR |= GPIO_BSRR_BS6;
+
+/********** PA10 set Out for DS18B20 WIRE1 **********************/
+GPIOA->MODER |=  GPIO_MODER_MODE10_0; //MODE6 -> 0b01
+GPIOA->MODER &= ~GPIO_MODER_MODE10_1; //MODE6 -> 0b01
+
+/* PA10 set High */
+GPIOA->BSRR |= GPIO_BSRR_BS10;
 
 }
 
