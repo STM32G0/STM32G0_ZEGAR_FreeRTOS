@@ -133,28 +133,28 @@ void vDisplayTask(void *pvParameters) {
       /* Use the 1th notification */
       if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
         
-        if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) //  digit in the tens position to display ? if yes then display , if no then display nothing
-				{
+     //   if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) //  digit in the tens position to display ? if yes then display , if no then display nothing
+				//{
       /* decimal and unity digit for temperature displayed before decimal point */
-			cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
-			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // calculation of the unity digit
+			//cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
+			//cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // calculation of the unity digit
 
-			max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
+			//max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
+			//max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
 
-		}
+		//}
 
-		if (DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
-		{
-			cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
-			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
+		//if (DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
+		//{
+			//cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
+			//max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
+			//max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
 
-		}
+		//}
 
 		/* Temperature display after decimal point (one digit) */
 
-		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
+		//max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
       }
     }
   }
@@ -256,12 +256,15 @@ void vTouchTask(void *pvParameters) {
 
 void vTemperatureTask(void *pvParameters) {
   static bool flags = 0;
-
+  
+  temperatureDevice_t Wire1 ;
+  temperatureDevice_t Wire2 ;
+  
   for (;;) {
 
     if (flags == true) {
       taskENTER_CRITICAL();
-      Temperature(GPIOC , 6); //PC6 Wire2
+      Temperature(GPIOC , 6, &Wire2); //PC6 Wire2
       taskEXIT_CRITICAL();
        
        xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature

@@ -80,9 +80,9 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="12" y="135" useTextEdit="1" path="main.c" left="0" top="120" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="39" y="114" useTextEdit="1" path="ds18b20.c" left="0" top="105" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="25" useTextEdit="1" path="ds18b20.h" left="0" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="49" y="266" useTextEdit="1" path="main.c" left="0" top="248" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="39" y="114" useTextEdit="1" path="ds18b20.c" left="0" selected="1" top="108" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="24" useTextEdit="1" path="ds18b20.h" left="0" top="0" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.h" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

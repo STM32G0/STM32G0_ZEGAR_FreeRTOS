@@ -22,8 +22,6 @@ uint16_t DStemp_Calkowita;
 uint16_t DStemp_Ulamek;
  } temperatureDevice_t ;
 
-temperatureDevice_t Wire1 ;
-temperatureDevice_t Wire2 ;
 
 
 void Set_WireHigh(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x);
