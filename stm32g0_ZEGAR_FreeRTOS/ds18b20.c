@@ -19,12 +19,12 @@ IDE   : SEGGER Embedded Studio
 /* definition of wire devices */
 
  
- temperatureDevice_t Wire1 = {
+ temperatureDevice_t WireDevice1 = {
 .GPIOx = GPIOA,
 .GPIO_Pin_x = 10 
 };
 
- temperatureDevice_t Wire2 = {
+ temperatureDevice_t WireDevice2 = {
 .GPIOx = GPIOC,
 .GPIO_Pin_x = 6 
 };

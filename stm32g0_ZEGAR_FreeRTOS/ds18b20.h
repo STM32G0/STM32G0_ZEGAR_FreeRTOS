@@ -29,7 +29,7 @@ uint32_t GPIO_Pin_x ;
 
  } temperatureDevice_t ;
 
-extern temperatureDevice_t Wire1, Wire2 ;
+extern temperatureDevice_t WireDevice1, WireDevice2 ;
 
 void Set_WireHigh(temperatureDevice_t *Wire);
 void Set_WireLow(temperatureDevice_t *Wire);

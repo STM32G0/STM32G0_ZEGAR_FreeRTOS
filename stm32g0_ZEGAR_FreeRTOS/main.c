@@ -257,14 +257,14 @@ void vTouchTask(void *pvParameters) {
 void vTemperatureTask(void *pvParameters) {
   static bool flags = 0;
   
-  temperatureGet_t TemperatureWire1_Recording ;
-  temperatureGet_t TemperatureWire2_Recording ;
+  temperatureGet_t TemperatureWireDevice1_GetToStructure ;
+  temperatureGet_t TemperatureWireDevice2_GetToStructure ;
   
   for (;;) {
 
     if (flags == true) {
       taskENTER_CRITICAL();
-      Temperature(&Wire2, &TemperatureWire2_Recording); //PC6 Wire2
+      Temperature(&WireDevice2, &TemperatureWireDevice2_GetToStructure); 
       taskEXIT_CRITICAL();
        
        xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
@@ -275,7 +275,7 @@ void vTemperatureTask(void *pvParameters) {
 
     if (flags == false) {
       taskENTER_CRITICAL();
-      ConvertTemperature(&Wire2); //PC6 Wire2
+      ConvertTemperature(&WireDevice2); 
       taskEXIT_CRITICAL();
       
       flags = 1; //trigger to toggle Convert/Read Temperature
