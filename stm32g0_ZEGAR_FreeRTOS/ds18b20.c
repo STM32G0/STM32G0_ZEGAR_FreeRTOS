@@ -16,31 +16,45 @@ IDE   : SEGGER Embedded Studio
 
 #define debug // Semihosting on/off
 
-temperatureDevice_t Wire1 ;
-temperatureDevice_t Wire2 ;
+/* definition of wire devices */
+
+ 
+ temperatureDevice_t Wire1 = {
+.GPIOx = GPIOA,
+.GPIO_Pin_x = 10 
+};
+
+ temperatureDevice_t Wire2 = {
+.GPIOx = GPIOC,
+.GPIO_Pin_x = 6 
+};
+
 
 /* Functions for 1-Wire operation */
-void Set_WireHigh(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
-GPIOx->BSRR |= (0x1UL << GPIO_Pin_x) ;
+void Set_WireHigh(temperatureDevice_t *Wire) {
+//GPIOx->BSRR |= (0x1UL << GPIO_Pin_x) ;
+(Wire->GPIOx)->BSRR |= (0x1UL << (Wire->GPIO_Pin_x)) ;
 }
 
-void Set_WireLow(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
-GPIOx->BRR |= (0x1UL << GPIO_Pin_x) ;
+void Set_WireLow(temperatureDevice_t *Wire) {
+//GPIOx->BRR |= (0x1UL << GPIO_Pin_x) ;
+(Wire->GPIOx)->BRR |= (0x1UL << (Wire->GPIO_Pin_x)) ;
 }
 
-bool Read_Wire(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x){
-return (GPIOx->IDR & (0x1UL << GPIO_Pin_x));
+bool Read_Wire(temperatureDevice_t *Wire){
+//return (GPIOx->IDR & (0x1UL << GPIO_Pin_x));
+return ((Wire->GPIOx)->IDR & (0x1UL << (Wire->GPIO_Pin_x)));
 }
 
 
-bool ResetPulse(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) // Reset the bus, wait for the PRESENCE pulse
+bool ResetPulse(temperatureDevice_t *Wire) // Reset the bus, wait for the PRESENCE pulse
 {
   bool result = false;
-  Set_WireLow(GPIOx , GPIO_Pin_x); 
+  Set_WireLow(Wire); 
   delay_us(480);  
-  Set_WireHigh(GPIOx , GPIO_Pin_x);
+  Set_WireHigh(Wire);
   delay_us(70);
-   if (Read_Wire(GPIOx , GPIO_Pin_x) == 0) { // 0 - Slave OK, 1 - Slave not response
+   if (Read_Wire(Wire) == 0) { // 0 - Slave OK, 1 - Slave not response
       result = true;
       }
   delay_us(410);
@@ -48,63 +62,63 @@ bool ResetPulse(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) // Reset the bus, wait
 }
 
 
-void WriteBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, bool bit) {
+void WriteBit(temperatureDevice_t *Wire, bool bit) {
   if (bit) {
     /* Write '1' bit */
-    Set_WireLow(GPIOx , GPIO_Pin_x);
+    Set_WireLow(Wire);
     delay_us(6);
-    Set_WireHigh(GPIOx , GPIO_Pin_x);
+    Set_WireHigh(Wire);
     delay_us(64);
   } else {
     /* Write '0' bit */
-    Set_WireLow(GPIOx , GPIO_Pin_x);
+    Set_WireLow(Wire);
     delay_us(60);
-    Set_WireHigh(GPIOx , GPIO_Pin_x);
+    Set_WireHigh(Wire);
     delay_us(10);
   }
 }
 
-bool ReadBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
+bool ReadBit(temperatureDevice_t *Wire) {
   bool result;
-  Set_WireLow(GPIOx , GPIO_Pin_x);
+  Set_WireLow(Wire);
   delay_us(6);
-  Set_WireHigh(GPIOx , GPIO_Pin_x);
+  Set_WireHigh(Wire);
   delay_us(9);
-  result = Read_Wire(GPIOx , GPIO_Pin_x);
+  result = Read_Wire(Wire);
   delay_us(55);
   return result;
 }
 
-void WriteByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, uint8_t byte) {
+void WriteByte(temperatureDevice_t *Wire, uint8_t byte) {
   for (uint8_t i = 0; i < 8; i++) {
-    WriteBit(GPIOx , GPIO_Pin_x, (byte & 0x01));
+    WriteBit(Wire, (byte & 0x01));
     /* shift the byte for the next bit */
     byte >>= 1;
   }
 }
 
-uint8_t ReadByte(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
+uint8_t ReadByte(temperatureDevice_t *Wire) {
   uint8_t result = 0;
   for (uint8_t i = 0; i < 8; i++) {
     /* shift the result to get it read for the next bit */
     result >>= 1;
     /* if result is one , then set MS bit */
-    if (ReadBit(GPIOx , GPIO_Pin_x))
+    if (ReadBit(Wire))
       result |= 0x80;
   }
   return result;
 }
 
-void ConvertTemperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x) {
-  if (ResetPulse(GPIOx , GPIO_Pin_x)) { // sensor ready for operation ?
+void ConvertTemperature(temperatureDevice_t *Wire) {
+  if (ResetPulse(Wire)) { // sensor ready for operation ?
     //**************************************** CONVERSION TEMPERATURE START *****************************************************
-    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_SKIP_ROM);  // skip ROM
-    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_CONVERT_T); // CONVERT T
+    WriteByte(Wire, DS18B20_SKIP_ROM);  // skip ROM
+    WriteByte(Wire, DS18B20_CONVERT_T); // CONVERT T
   }
 }
 
 /* function calculating the temperature */
-void Temperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, temperatureDevice_t *TemperatureStructure) { 
+void Temperature(temperatureDevice_t *Wire, temperatureGet_t *TemperatureStructure) { 
 
   uint8_t temp1 = 0, temp2 = 0;
   uint16_t DStemp = 0; // merge into one variable (LSB + MSB) 
@@ -112,14 +126,14 @@ void Temperature(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin_x, temperatureDevice_t *
   uint16_t DStemp_Calkowita = 0; // extraction of the total with DStemp
   uint16_t DStemp_Ulamek = 0 ; // extraction of fractional  with DStemp 
 
-  if (ResetPulse(GPIOx , GPIO_Pin_x)) { // sensor ready for operation ?
+  if (ResetPulse(Wire)) { // sensor ready for operation ?
 
     //***************************************** START OF TEMPERATURE READING ******************************************
-    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_SKIP_ROM); // skip ROM
-    WriteByte(GPIOx , GPIO_Pin_x, DS18B20_READ);     // READ SCRATCHPAD
-    temp1 = ReadByte(GPIOx , GPIO_Pin_x);            // reading the LSB
-    temp2 = ReadByte(GPIOx , GPIO_Pin_x);            // reading the MSB
-    ResetPulse(GPIOx , GPIO_Pin_x);                  // finish reading, we are not interested in the rest of the bytes
+    WriteByte(Wire, DS18B20_SKIP_ROM); // skip ROM
+    WriteByte(Wire, DS18B20_READ);     // READ SCRATCHPAD
+    temp1 = ReadByte(Wire);            // reading the LSB
+    temp2 = ReadByte(Wire);            // reading the MSB
+    ResetPulse(Wire);                  // finish reading, we are not interested in the rest of the bytes
 
     DStemp = (temp2 << 8) | temp1; // merge the MSB byte and the LSB byte into one word
     DStemp_Znak = temp2 >> 7;      // extract information about the temperature sign
