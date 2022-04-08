@@ -147,8 +147,6 @@ void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure)
     TemperatureStructure->DStemp_Calkowita = DStemp_Calkowita;
     TemperatureStructure->DStemp_Ulamek = DStemp_Ulamek ;
     TemperatureStructure->DStemp_Znak = DStemp_Znak ;
-
-
     
     #ifdef debug
     printf("Temperatura: %d,%d \n", DStemp_Calkowita, DStemp_Ulamek);

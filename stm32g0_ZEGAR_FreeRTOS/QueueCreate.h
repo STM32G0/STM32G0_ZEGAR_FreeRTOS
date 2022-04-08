@@ -6,6 +6,7 @@ IDE   : SEGGER Embedded Studio
 ******************************************/
 
 extern QueueHandle_t xQueueClockTask;
+extern QueueHandle_t xQueueTemperatureTask;
 
 typedef struct {
   uint8_t HOUR;

@@ -265,6 +265,9 @@ void vTemperatureTask(void *pvParameters) {
     if (flags == true) {
       taskENTER_CRITICAL();
       Temperature(&WireDevice2, &TemperatureWireDevice2_Structure); 
+      if (xQueueTemperatureTask != NULL) {//  send the data to the queue , the data is taken from the DS18B20, we pack the data into a structure
+        xQueueSend(xQueueTemperatureTask, (void *)&TemperatureWireDevice2_Structure, (TickType_t)0); //Timeout = 0 - without blocking the task
+      }
       taskEXIT_CRITICAL();
        
        xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
