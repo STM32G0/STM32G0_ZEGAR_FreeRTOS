@@ -118,7 +118,7 @@ void ConvertTemperature(temperatureDevice_t *Wire) {
 }
 
 /* function calculating the temperature */
-void Temperature(temperatureDevice_t *Wire, temperatureGet_t *TemperatureStructure) { 
+void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure) { 
 
   uint8_t temp1 = 0, temp2 = 0;
   uint16_t DStemp = 0; // merge into one variable (LSB + MSB) 
@@ -143,8 +143,7 @@ void Temperature(temperatureDevice_t *Wire, temperatureGet_t *TemperatureStructu
     }
     DStemp_Calkowita = (uint8_t)((DStemp >> 4) & 0x7F);       // shift by 4 bits and mask
     DStemp_Ulamek = (uint8_t)(((DStemp & 0xF) * 625) / 1000); // One digit after the decimal point. If you want two digits to divide by 100
-
-    TemperatureStructure->DStemp = DStemp;
+    
     TemperatureStructure->DStemp_Calkowita = DStemp_Calkowita;
     TemperatureStructure->DStemp_Ulamek = DStemp_Ulamek ;
     TemperatureStructure->DStemp_Znak = DStemp_Znak ;

@@ -18,13 +18,19 @@ IDE   : SEGGER Embedded Studio
 #include "queue.h"
 #include "semphr.h"
 #include "QueueCreate.h"
+#include "ds18b20.h"
+
 
 
 QueueHandle_t xQueueClockTask = NULL;
+QueueHandle_t xQueueTemperatureTask = NULL;
 
 void QueueCreate(void){
 
 /* Attempt to create a queue. */
   xQueueClockTask = xQueueCreate(2, sizeof(time_t));
   assert(xQueueClockTask != NULL); // assert create queue control
+
+  xQueueTemperatureTask = xQueueCreate(8, sizeof(temperature_t));
+  assert(xQueueTemperatureTask != NULL); // assert create queue control
 }

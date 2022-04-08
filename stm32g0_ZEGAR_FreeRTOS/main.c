@@ -257,14 +257,14 @@ void vTouchTask(void *pvParameters) {
 void vTemperatureTask(void *pvParameters) {
   static bool flags = 0;
   
-  temperatureGet_t TemperatureWireDevice1_GetToStructure ;
-  temperatureGet_t TemperatureWireDevice2_GetToStructure ;
+  temperature_t TemperatureWireDevice1_Structure ;
+  temperature_t TemperatureWireDevice2_Structure ;
   
   for (;;) {
 
     if (flags == true) {
       taskENTER_CRITICAL();
-      Temperature(&WireDevice2, &TemperatureWireDevice2_GetToStructure); 
+      Temperature(&WireDevice2, &TemperatureWireDevice2_Structure); 
       taskEXIT_CRITICAL();
        
        xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
@@ -284,7 +284,7 @@ void vTemperatureTask(void *pvParameters) {
 #ifdef debug
     printf("Hello vTemperatureTask\n");
 #endif
-    vTaskDelay(4500 / portTICK_RATE_MS); // Temperature reading , every 2.5 seconds
+    vTaskDelay(2500 / portTICK_RATE_MS); // Temperature reading , every 2.5 seconds
   }
 }
 

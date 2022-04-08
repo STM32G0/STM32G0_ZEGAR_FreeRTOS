@@ -16,11 +16,10 @@ IDE   : SEGGER Embedded Studio
 
  
  typedef  struct {
-uint16_t DStemp;
 bool DStemp_Znak;
 uint16_t DStemp_Calkowita;
 uint16_t DStemp_Ulamek;
- } temperatureGet_t ;
+ } temperature_t ;
 
 
 typedef  struct {
@@ -40,7 +39,7 @@ void WriteBit(temperatureDevice_t *Wire, bool bit);
 bool ReadBit(temperatureDevice_t *Wire);
 void WriteByte(temperatureDevice_t *Wire, uint8_t byte);
 uint8_t ReadByte(temperatureDevice_t *Wire);
-void Temperature(temperatureDevice_t *Wire, temperatureGet_t *TemperatureStructure);	
+void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure);	
 void ConvertTemperature(temperatureDevice_t *Wire);
 
 
