@@ -18,13 +18,17 @@ IDE   : SEGGER Embedded Studio
 
 /* definition of wire devices */
 
+
+enum {Wire1 = 1, Wire2 = 2};
  
  temperatureDevice_t WireDevice1 = {
+.deviceID = Wire1,
 .GPIOx = GPIOA,
 .GPIO_Pin_x = 10 
 };
 
  temperatureDevice_t WireDevice2 = {
+.deviceID = Wire2,
 .GPIOx = GPIOC,
 .GPIO_Pin_x = 6 
 };
@@ -144,6 +148,7 @@ void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure)
     DStemp_Calkowita = (uint8_t)((DStemp >> 4) & 0x7F);       // shift by 4 bits and mask
     DStemp_Ulamek = (uint8_t)(((DStemp & 0xF) * 625) / 1000); // One digit after the decimal point. If you want two digits to divide by 100
     
+    TemperatureStructure->deviceID = Wire->deviceID ;
     TemperatureStructure->DStemp_Calkowita = DStemp_Calkowita;
     TemperatureStructure->DStemp_Ulamek = DStemp_Ulamek ;
     TemperatureStructure->DStemp_Znak = DStemp_Znak ;

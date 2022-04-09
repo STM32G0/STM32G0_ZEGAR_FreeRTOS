@@ -16,6 +16,7 @@ IDE   : SEGGER Embedded Studio
 
  
  typedef  struct {
+uint8_t deviceID ;
 bool DStemp_Znak;
 uint16_t DStemp_Calkowita;
 uint16_t DStemp_Ulamek;
@@ -23,6 +24,7 @@ uint16_t DStemp_Ulamek;
 
 
 typedef  struct {
+uint8_t deviceID ;
 GPIO_TypeDef *GPIOx ;
 uint32_t GPIO_Pin_x ;
 

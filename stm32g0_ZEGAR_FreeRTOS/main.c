@@ -92,10 +92,12 @@ void vDisplayTask(void *pvParameters) {
   time_t MCP79410_Time_DisplayTask = {0, 0, 0};
   uint32_t minute_segment_mask = 1; // set bit no 0 (0...7)
   uint32_t hour_segment_mask = 2;   // set bit no 1 (0...7)
-  uint32_t notificationvalue_0 = 0;
-  uint32_t notificationvalue_1 = 0;
+  uint32_t notificationvalue_0 = 0; // for minute segment display toggle
+  uint32_t notificationvalue_1 = 0; // //for hour segment display toggle
   uint16_t cyfra_dziesiatki ;       // auxiliary variable to extract the digit for displaying the temperature at the decimal position
   uint16_t cyfra_jednosci ;         // auxiliary variable to extract the digit for the temperature display at the unity position
+  temperature_t TemperatureWireDeviceX_Structure ; // Write data to structure, Receive From TemperatureTask in queue
+
 
   for (;;) {
 
@@ -131,30 +133,30 @@ void vDisplayTask(void *pvParameters) {
 
       /* Task Notify from vTemperatureTask */
       /* Use the 1th notification */
-      if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
-        
-     //   if (DStemp_Calkowita >= 10 && DStemp_Calkowita < 100) //  digit in the tens position to display ? if yes then display , if no then display nothing
-				//{
+      //if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
+       if (xQueueReceive(xQueueTemperatureTask, &TemperatureWireDeviceX_Structure, (TickType_t)0) == pdPASS) { // get the data (temperature) from the queue if available
+        if (TemperatureWireDeviceX_Structure.DStemp_Calkowita >= 10 && TemperatureWireDeviceX_Structure.DStemp_Calkowita < 100){ //  digit in the tens position to display ? if yes then display , if no then display nothing
+				
       /* decimal and unity digit for temperature displayed before decimal point */
-			//cyfra_dziesiatki = (uint16_t) (DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
-			//cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10;        // calculation of the unity digit
+			cyfra_dziesiatki = (uint16_t) (TemperatureWireDeviceX_Structure.DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
+			cyfra_jednosci = ((uint16_t) TemperatureWireDeviceX_Structure.DStemp_Calkowita) % 10;        // calculation of the unity digit
 
-			//max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
-			//max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
 
-		//}
+		}
 
-		//if (DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
-		//{
-			//cyfra_jednosci = ((uint16_t) DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
-			//max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
-			//max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
+		if (TemperatureWireDeviceX_Structure.DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
+		{
+			cyfra_jednosci = ((uint16_t) TemperatureWireDeviceX_Structure.DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
 
-		//}
+		}
 
 		/* Temperature display after decimal point (one digit) */
 
-		//max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(DStemp_Ulamek));
+		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(TemperatureWireDeviceX_Structure.DStemp_Ulamek));
       }
     }
   }
@@ -264,13 +266,13 @@ void vTemperatureTask(void *pvParameters) {
 
     if (flags == true) {
       taskENTER_CRITICAL();
-      Temperature(&WireDevice2, &TemperatureWireDevice2_Structure); 
+      Temperature(&WireDevice2, &TemperatureWireDevice2_Structure); //get temperature from Device2(wire2), put temperature to the structure TemperatureWireDevice2_Structure
       if (xQueueTemperatureTask != NULL) {//  send the data to the queue , the data is taken from the DS18B20, we pack the data into a structure
         xQueueSend(xQueueTemperatureTask, (void *)&TemperatureWireDevice2_Structure, (TickType_t)0); //Timeout = 0 - without blocking the task
       }
       taskEXIT_CRITICAL();
        
-       xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
+      // xTaskNotifyGiveIndexed(xDisplayTaskHandle, 1); // semaphore for vDisplayTask - display temperature
        //if (DStemp_Znak ){}// jesli znak temperatury ujemny , zaimplementuj miganie co 1 s polem temperatury
 
        flags = 0; //trigger to toggle Convert/Read Temperature

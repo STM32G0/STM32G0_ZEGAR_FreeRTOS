@@ -63,9 +63,9 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="176" filename="main.c"/>
-   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="200" filename="main.c"/>
-   <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="121" filename="main.c"/>
+   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="178" filename="main.c"/>
+   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="202" filename="main.c"/>
+   <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="123" filename="main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -78,9 +78,9 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="10" y="267" useTextEdit="1" path="main.c" left="0" selected="1" top="87" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="149" useTextEdit="1" path="ds18b20.c" left="0" top="113" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="55" y="41" useTextEdit="1" path="ds18b20.h" left="0" top="4" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="4" y="138" useTextEdit="1" path="main.c" left="0" selected="1" top="115" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="53" y="150" useTextEdit="1" path="ds18b20.c" left="0" top="116" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="24" useTextEdit="1" path="ds18b20.h" left="0" top="4" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="15" y="11" useTextEdit="1" path="QueueCreate.h" left="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="23" y="33" useTextEdit="1" path="QueueCreate.c" left="0" top="0" codecName="Default"/>
  </Files>
