@@ -134,29 +134,30 @@ void vDisplayTask(void *pvParameters) {
       /* Task Notify from vTemperatureTask */
       /* Use the 1th notification */
       //if (ulTaskNotifyTakeIndexed( 1,pdTRUE, (TickType_t)0) ) {
+      /* Queue from vTemperatureTask */
        if (xQueueReceive(xQueueTemperatureTask, &TemperatureWireDeviceX_Structure, (TickType_t)0) == pdPASS) { // get the data (temperature) from the queue if available
         if (TemperatureWireDeviceX_Structure.DStemp_Calkowita >= 10 && TemperatureWireDeviceX_Structure.DStemp_Calkowita < 100){ //  digit in the tens position to display ? if yes then display , if no then display nothing
 				
       /* decimal and unity digit for temperature displayed before decimal point */
 			cyfra_dziesiatki = (uint16_t) (TemperatureWireDeviceX_Structure.DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
-			cyfra_jednosci = ((uint16_t) TemperatureWireDeviceX_Structure.DStemp_Calkowita) % 10;        // calculation of the unity digit
+			cyfra_jednosci = ((uint16_t) (TemperatureWireDeviceX_Structure.DStemp_Calkowita)) % 10;        // calculation of the unity digit
 
-			max7219.SendToDevice(Device1, MAX7219_DIGIT0, dec2bcd(cyfra_dziesiatki));
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci | kropka)); // display a number and a dot
+			max7219.SendToDevice(Device1, MAX7219_DIGIT0, cyfra_dziesiatki);
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, cyfra_jednosci | kropka); // display a number and a dot
 
 		}
 
 		if (TemperatureWireDeviceX_Structure.DStemp_Calkowita < 10 ) //  number in the units position to display ? if yes - then display , if no - display nothing
 		{
 			cyfra_jednosci = ((uint16_t) TemperatureWireDeviceX_Structure.DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
-			max7219.SendToDevice(Device1, MAX7219_DIGIT1, dec2bcd(cyfra_jednosci) | kropka); // display the digit for the unity value and a dot
+			max7219.SendToDevice(Device1, MAX7219_DIGIT1, cyfra_jednosci | kropka); // display the digit for the unity value and a dot
 			max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF); // Turn off the display in the decimal position
 
 		}
 
 		/* Temperature display after decimal point (one digit) */
 
-		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,dec2bcd(TemperatureWireDeviceX_Structure.DStemp_Ulamek));
+		max7219.SendToDevice(Device1,MAX7219_DIGIT2 ,TemperatureWireDeviceX_Structure.DStemp_Ulamek);
       }
     }
   }
