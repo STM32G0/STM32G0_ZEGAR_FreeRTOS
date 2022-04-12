@@ -17,36 +17,36 @@ IDE   : SEGGER Embedded Studio
 // #define debug // Semihosting on/off
 
 /* definition of wire devices */
-
-
-enum {Wire1 = 1, Wire2 = 2};
  
  temperatureDevice_t WireDevice1 = {
 .deviceID = Wire1,
 .GPIOx = GPIOA,
-.GPIO_Pin_x = 10 
+.GPIO_Pin_x = 10,
+.DStemp_Znak = false,
+.DStemp_Calkowita = 0,
+.DStemp_Ulamek = 0,
 };
 
  temperatureDevice_t WireDevice2 = {
 .deviceID = Wire2,
 .GPIOx = GPIOC,
-.GPIO_Pin_x = 6 
+.GPIO_Pin_x = 6, 
+.DStemp_Znak = false,
+.DStemp_Calkowita = 0,
+.DStemp_Ulamek = 0,
 };
 
 
 /* Functions for 1-Wire operation */
 void Set_WireHigh(temperatureDevice_t *Wire) {
-//GPIOx->BSRR |= (0x1UL << GPIO_Pin_x) ;
 (Wire->GPIOx)->BSRR |= (0x1UL << (Wire->GPIO_Pin_x)) ;
 }
 
 void Set_WireLow(temperatureDevice_t *Wire) {
-//GPIOx->BRR |= (0x1UL << GPIO_Pin_x) ;
 (Wire->GPIOx)->BRR |= (0x1UL << (Wire->GPIO_Pin_x)) ;
 }
 
 bool Read_Wire(temperatureDevice_t *Wire){
-//return (GPIOx->IDR & (0x1UL << GPIO_Pin_x));
 return ((Wire->GPIOx)->IDR & (0x1UL << (Wire->GPIO_Pin_x)));
 }
 
@@ -122,7 +122,7 @@ void ConvertTemperature(temperatureDevice_t *Wire) {
 }
 
 /* function calculating the temperature */
-void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure) { 
+void GetTemperature(temperatureDevice_t *Wire) { 
 
   uint8_t temp1 = 0, temp2 = 0;
   uint16_t DStemp = 0; // merge into one variable (LSB + MSB) 
@@ -148,10 +148,9 @@ void Temperature(temperatureDevice_t *Wire, temperature_t *TemperatureStructure)
     DStemp_Calkowita = (uint8_t)((DStemp >> 4) & 0x7F);       // shift by 4 bits and mask
     DStemp_Ulamek = (uint8_t)(((DStemp & 0xF) * 625) / 1000); // One digit after the decimal point. If you want two digits to divide by 100
     
-    TemperatureStructure->deviceID = Wire->deviceID ;
-    TemperatureStructure->DStemp_Calkowita = DStemp_Calkowita;
-    TemperatureStructure->DStemp_Ulamek = DStemp_Ulamek ;
-    TemperatureStructure->DStemp_Znak = DStemp_Znak ;
+    Wire->DStemp_Calkowita = DStemp_Calkowita;
+    Wire->DStemp_Ulamek = DStemp_Ulamek ;
+    Wire->DStemp_Znak = DStemp_Znak ;
  
     #ifdef debug
     printf("Temperatura: %d,%d \n", DStemp_Calkowita, DStemp_Ulamek);

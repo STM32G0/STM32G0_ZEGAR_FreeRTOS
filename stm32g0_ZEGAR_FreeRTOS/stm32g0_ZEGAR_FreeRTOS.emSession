@@ -62,16 +62,7 @@
   <Trace enabled="Yes"/>
  </TraceWindow>
  <Watch1>
-  <Watches active="1" update="Never">
-   <Watchpoint expression="touch_SELECT_counter" name="touch_SELECT_counter" radix="16" linenumber="179" filename="main.c"/>
-   <Watchpoint expression="TemperatureWireDeviceX_Structure" name="TemperatureWireDeviceX_Structure" radix="16" linenumber="99" filename="main.c"/>
-   <Watchpoint expression="TemperatureWireDevice2_Structure" name="TemperatureWireDevice2_Structure" radix="16" linenumber="264" filename="main.c"/>
-   <Watchpoint expression="TemperatureStructure" name="TemperatureStructure" radix="16" linenumber="152" filename="ds18b20.c"/>
-   <Watchpoint expression="notificationvalue" name="notificationvalue" radix="16" linenumber="123" filename="main.c"/>
-   <Watchpoint expression="minuty" name="minuty" radix="10" linenumber="203" filename="main.c"/>
-   <Watchpoint expression="cyfra_jednosci" name="cyfra_jednosci" radix="10" linenumber="143" filename="main.c"/>
-   <Watchpoint expression="cyfra_dziesiatki" name="cyfra_dziesiatki" radix="10" linenumber="142" filename="main.c"/>
-  </Watches>
+  <Watches active="1" update="Never"/>
  </Watch1>
  <Watch2>
   <Watches active="0" update="Never"/>
@@ -83,11 +74,13 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="292" useTextEdit="1" path="main.c" left="0" top="281" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="16" useTextEdit="1" path="ds18b20.c" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="24" useTextEdit="1" path="ds18b20.h" left="0" selected="1" top="8" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="11" useTextEdit="1" path="QueueCreate.h" left="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="23" y="33" useTextEdit="1" path="QueueCreate.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="7" y="146" useTextEdit="1" path="main.c" left="0" selected="1" top="135" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="19" useTextEdit="1" path="ds18b20.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" path="ds18b20.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="46" y="8" useTextEdit="1" path="QueueCreate.h" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="44" y="34" useTextEdit="1" path="QueueCreate.c" left="0" top="10" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="29" useTextEdit="1" path="TaskCreate.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="49" y="18" useTextEdit="1" path="FreeRTOSConfig.h" left="0" top="4" codecName="Default"/>
  </Files>
  <EMStudioWindow activeProject="stm32g0_ZEGAR_FreeRTOS" fileDialogDefaultFilter="*.h" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/wojte/Documents/SEGGER Embedded Studio for ARM Projects/GitHub/STM32G0_Project/STM32G0_ZEGAR_FreeRTOS/stm32g0_ZEGAR_FreeRTOS" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

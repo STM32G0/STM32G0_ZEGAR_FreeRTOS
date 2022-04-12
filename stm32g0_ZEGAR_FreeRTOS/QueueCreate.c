@@ -23,7 +23,8 @@ IDE   : SEGGER Embedded Studio
 
 
 QueueHandle_t xQueueClockTask = NULL;
-QueueHandle_t xQueueTemperatureTask = NULL;
+QueueHandle_t xQueueTemperatureTaskWire = NULL;
+
 
 void QueueCreate(void){
 
@@ -31,6 +32,7 @@ void QueueCreate(void){
   xQueueClockTask = xQueueCreate(2, sizeof(time_t));
   assert(xQueueClockTask != NULL); // assert create queue control
 
-  xQueueTemperatureTask = xQueueCreate(8, sizeof(temperature_t));
-  assert(xQueueTemperatureTask != NULL); // assert create queue control
+  xQueueTemperatureTaskWire = xQueueCreate(8, sizeof(temperatureDevice_t));
+  assert(xQueueTemperatureTaskWire != NULL); // assert create queue control
+  
 }
