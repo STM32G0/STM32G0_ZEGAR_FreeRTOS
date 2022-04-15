@@ -7,6 +7,7 @@ IDE   : SEGGER Embedded Studio
 
 #include <stdint.h>
 #include "max7219.h"
+#include "ds18b20.h"
 
 
 #ifndef MAX7219_INTERFACE_H_
@@ -23,6 +24,7 @@ void (*Display_MIN)(uint8_t minutes);
 void (*Display_HOUR)(uint8_t hour);
 void (*ClearDisplay_MIN)(void);
 void (*ClearDisplay_HOUR)(void);
+void (*Display_TemperatureAllDevice)(temperatureDevice_t TemperatureAllDevice);
 
 
 } max7219_interface_t ;

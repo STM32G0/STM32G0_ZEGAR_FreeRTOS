@@ -9,6 +9,7 @@ IDE   : SEGGER Embedded Studio
 #define DS18B20_H_
 #include <stm32g071xx.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define	DS18B20_CONVERT_T	0x44
 #define	DS18B20_READ		0xBE

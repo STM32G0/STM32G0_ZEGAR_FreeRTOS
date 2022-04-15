@@ -8,6 +8,8 @@ IDE   : SEGGER Embedded Studio
 #ifndef MAX7219_H_
 #define MAX7219_H_
 
+#include "ds18b20.h"
+
 #define MAX7219_USE_DIGIT	8  // okreslenie liczby wywietlaczy 7seg. sterowanych przy pomocy ukladu od 1 do 8 szt
 #define MAX7219_DEVICES         2  // bo mam 2 x MAX7219
 #define MAX7219_SHUTDOWN_MODE		0
@@ -58,5 +60,6 @@ void max7219_display_Minutes(uint8_t minutes);
 void max7219_display_Hour(uint8_t hour);
 void max7219_clear_display_Minutes(void);
 void max7219_clear_display_Hour(void);
+void max7219_display_Temperature(temperatureDevice_t TemperatureDevice);
 
 #endif /* MAX7219_H_ */

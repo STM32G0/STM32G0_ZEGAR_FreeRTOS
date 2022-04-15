@@ -10,6 +10,7 @@ IDE   : SEGGER Embedded Studio
 #include "system_config.h"
 #include "max7219.h"
 #include "max7219_interface.h"
+#include "ds18b20.h"
 
 
 uint8_t Max7219SpiBuffer[MAX7219_DEVICES * 2];
@@ -93,3 +94,52 @@ void max7219_clear_display_Hour(void){
           max7219.SendToDevice(Device0, MAX7219_DIGIT3, 0x0F); // zgaś cyfre dziesiatki
 }
 
+/* funkcja do współpracy z DS18B20 i wyswietlania temperatury*/
+
+void max7219_display_Temperature(temperatureDevice_t TemperatureDevice){
+  /* Display Temperature All Device*/
+
+  /* Wire1 and Wire2 */
+  uint16_t cyfra_dziesiatki; //  variable to extract the digit for displaying the temperature at the decimal position
+  uint16_t cyfra_jednosci;   //  variable to extract the digit for the temperature display at the unity position
+
+  if (TemperatureDevice.DStemp_Calkowita >= 10 && TemperatureDevice.DStemp_Calkowita < 100) { //  digit in the tens position to display ? if yes then display , if no then display nothing
+
+    /* decimal and unity digit for temperature displayed before decimal point */
+    cyfra_dziesiatki = (uint16_t)(TemperatureDevice.DStemp_Calkowita / 10) % 10; // calculation of the decimal digit
+    cyfra_jednosci = ((uint16_t)(TemperatureDevice.DStemp_Calkowita)) % 10;      // calculation of the unity digit
+    if (TemperatureDevice.deviceID == Wire1) {
+      max7219.SendToDevice(Device0, MAX7219_DIGIT4, cyfra_dziesiatki);
+      max7219.SendToDevice(Device0, MAX7219_DIGIT5, cyfra_jednosci | kropka); // display a number and a dot
+    }
+    if (TemperatureDevice.deviceID == Wire2) {
+      max7219.SendToDevice(Device1, MAX7219_DIGIT0, cyfra_dziesiatki);
+      max7219.SendToDevice(Device1, MAX7219_DIGIT1, cyfra_jednosci | kropka); // display a number and a dot
+    }
+  }
+
+  if (TemperatureDevice.DStemp_Calkowita < 10) //  number in the units position to display ? if yes - then display , if no - display nothing
+  {
+    cyfra_jednosci = ((uint16_t)TemperatureDevice.DStemp_Calkowita) % 10; // wyliczenie cyfry jednosci
+    /* Wire1 */
+    if (TemperatureDevice.deviceID == Wire1) {
+      max7219.SendToDevice(Device0, MAX7219_DIGIT5, cyfra_jednosci | kropka); // display the digit for the unity value and a dot
+      max7219.SendToDevice(Device0, MAX7219_DIGIT4, 0xF);                     // Turn off the display in the decimal position
+    }
+    /* Wire2 */
+    if (TemperatureDevice.deviceID == Wire2) {
+      max7219.SendToDevice(Device1, MAX7219_DIGIT1, cyfra_jednosci | kropka); // display the digit for the unity value and a dot
+      max7219.SendToDevice(Device1, MAX7219_DIGIT0, 0xF);                     // Turn off the display in the decimal position
+    }
+  }
+
+  /* Temperature display after decimal point (one digit) */
+  /* Wire1 */
+  if (TemperatureDevice.deviceID == Wire1) {
+    max7219.SendToDevice(Device0, MAX7219_DIGIT6, TemperatureDevice.DStemp_Ulamek);
+  }
+  /* Wire2 */
+  if (TemperatureDevice.deviceID == Wire2) {
+    max7219.SendToDevice(Device1, MAX7219_DIGIT2, TemperatureDevice.DStemp_Ulamek);
+  }
+}
