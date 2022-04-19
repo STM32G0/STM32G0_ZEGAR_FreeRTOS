@@ -159,7 +159,7 @@ void vTouchTask(void *pvParameters) {
     if (notificationvalue & tasknotify_mask) { // Bit No. 0 of the TaskNotification is set ? . Bit Sent from EXTI4_15_IRQHandler interrupt
       cap1293.WriteRegister(CAP1293_MAIN, (cap1293.ReadRegister(CAP1293_MAIN) & ~CAP1293_MAIN_INT)); // clear main interrupt, must be at the beginning otherwise a change of context may cause a delay in clearing the flag
 
-      /**************** Reakcja na dotyk pola CS3 - SELECT ***************/
+      /**************** Response to field touch CS3 - SELECT ***************/
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS3_SELECT) { // touch field CS3 "SELECT" ?
 
         if (touch_SELECT_counter > 1) {
@@ -168,7 +168,7 @@ void vTouchTask(void *pvParameters) {
         xTaskNotifyIndexed(xDisplayTaskHandle, 0, (1 << touch_SELECT_counter++), eSetBits); // send to xDisplayTask flag, bit 0 or bit 1 set
       }
 
-      /*************** Reakcja na dotyk pola CS2 - UP *******************/
+      /*************** Response to field touch CS2 - UP *******************/
       if (cap1293.ReadRegister(CAP1293_SENSTATUS) & CAP1293_CS2_UP) { // touch field CS2 "UP" ?
         switch (touch_SELECT_counter) {
 
@@ -275,6 +275,21 @@ void vTemperatureTask(void *pvParameters) {
 #endif
     vTaskDelay(2500 / portTICK_RATE_MS); // Temperature reading , every 2.5 seconds
   }
+}
+
+
+void vOptoResitorsTask(void *pvParameters) {
+
+
+for (;;) {
+
+
+#ifdef debug
+    printf("Hello vOptoResitorsTask\n");
+#endif
+}
+
+
 }
 
 /*signal on PB5 pin generate IRQ*/

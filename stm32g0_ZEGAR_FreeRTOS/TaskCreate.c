@@ -24,6 +24,7 @@ TaskHandle_t xClockTaskHandle = NULL;
 TaskHandle_t xDisplayTaskHandle = NULL;
 TaskHandle_t xTouchTaskHandle = NULL;
 TaskHandle_t xTemperatureTaskHandle = NULL;
+TaskHandle_t xOptoResitorsTaskHandle = NULL;
 
 void TaskCreate(void) {
   /* Task Create */
@@ -31,4 +32,5 @@ void TaskCreate(void) {
   assert(xTaskCreate(vDisplayTask, "DisplayTask", 384, NULL, 3, &xDisplayTaskHandle) == pdPASS);
   assert(xTaskCreate(vTouchTask, "TouchTask", 384, NULL, 3, &xTouchTaskHandle) == pdPASS);
   assert(xTaskCreate(vTemperatureTask, "TemperatureTask", 384, NULL, 3, &xTemperatureTaskHandle) == pdPASS);
+  assert(xTaskCreate(vOptoResitorsTask, "OptoResitorsTask", 128, NULL, 3, &xOptoResitorsTaskHandle) == pdPASS);
 }

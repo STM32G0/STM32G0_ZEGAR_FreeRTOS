@@ -58,6 +58,7 @@
         <file file_name="spi_config.c" />
         <file file_name="system_config.c" />
         <file file_name="timer_config.c" />
+        <file file_name="adc_config.c" />
       </folder>
       <file file_name="mcp79410.c" />
       <folder Name="Interface">
@@ -137,6 +138,7 @@
         <file file_name="spi_config.h" />
         <file file_name="system_config.h" />
         <file file_name="timer_config.h" />
+        <file file_name="adc_config.h" />
       </folder>
       <file file_name="mcp79410.h" />
       <folder Name="Interface">

@@ -47,20 +47,21 @@ return I2C1_Read(slaveAdress, registerAdress);
 //..............................................................................
 
 void i2c_rtcc_ini(void){             // initialization of the I2C RTCC: 
-uint8_t day = 0;
+uint8_t day = 0, sec = 0;
 i2c_rtcc_wr(ADDR_CTRL,0xC0);         // square wave on MFP, no alarms, MFP = 1Hz
 /*enable VBAT*/
 day = i2c_rtcc_rd(ADDR_DAY);
 i2c_rtcc_wr(ADDR_DAY,day | VBATEN);  // enable the battery back-up
 /*Set Time*/
-/* nie uzywamy YEAR, MNTH , DATE i nie ustawia tego !!! */
+/* nie uzywamy YEAR, MNTH , DATE i nie ustawiamy tego !!! */
 //i2c_rtcc_wr(ADDR_YEAR,0x22);         // initialize YEAR  register : (20)22           
 //i2c_rtcc_wr(ADDR_MNTH,0x02);         // initialize MONTH register : luty 
 //i2c_rtcc_wr(ADDR_DATE,0x16);         // initialize DATE  register : date =  
 /* ustawiamy HOUR , MIN i zerujemy sekundy */
-i2c_rtcc_wr(ADDR_HOUR,dec2bcd(13));    // initialize HOUR  register : hour = 13  
-i2c_rtcc_wr(ADDR_MIN,dec2bcd(34));     // initialize MIN   register : min  = 34  
-i2c_rtcc_wr(ADDR_SEC,START_32KHZ);     // init SEC register and start the 32khz oscillator SEC = 00 + ST bit = 1
+//i2c_rtcc_wr(ADDR_HOUR,dec2bcd(13));    // initialize HOUR  register : hour = 13  
+//i2c_rtcc_wr(ADDR_MIN,dec2bcd(34));     // initialize MIN   register : min  = 34  
+sec = i2c_rtcc_rd(ADDR_DAY);             //read SEC register
+i2c_rtcc_wr(ADDR_SEC,sec|START_32KHZ);   // start the 32khz oscillator SEC = 00 + ST bit = 1
 }   
 
 //..............................................................................

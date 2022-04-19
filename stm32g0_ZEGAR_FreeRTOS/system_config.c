@@ -24,6 +24,7 @@ SPI1_MANAGER_Initialize();
 //SPI2_MANAGER_Initialize();
 TIMER6_MANAGER_Initialize();
 INTERRUPT_MANAGER_Initialize();
+ADC_MANAGER_Initialize();
 
 
 }

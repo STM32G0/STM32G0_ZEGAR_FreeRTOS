@@ -116,5 +116,8 @@ GPIOA->MODER &= ~GPIO_MODER_MODE10_1; //MODE6 -> 0b01
 /* PA10 set High */
 GPIOA->BSRR |= GPIO_BSRR_BS10;
 
+/********* PA7 config for OptoResistor *********/
+GPIOA->MODER |=  GPIO_MODER_MODE7_0; //MODE7 -> 0b11
+GPIOA->MODER |=  GPIO_MODER_MODE7_1; //MODE7 -> 0b11
 }
 

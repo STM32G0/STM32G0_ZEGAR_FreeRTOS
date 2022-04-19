@@ -7,6 +7,7 @@
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/spi_config.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/system_config.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/timer_config.o"
+"Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/adc_config.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/mcp79410.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/mcp79410_interface.o"
 "Output/Debug/Obj/stm32g0_ZEGAR_FreeRTOS/max7219_interface.o"
