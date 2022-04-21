@@ -15,6 +15,7 @@ IDE   : SEGGER Embedded Studio
 #include "spi_config.h"
 #include "interrupt_config.h"
 #include "timer_config.h"
+#include "adc_config.h"
 
 void SYSTEM_MANAGER_Initialize(void);
 

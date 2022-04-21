@@ -19,4 +19,5 @@ const max7219_interface_t max7219 = {
 .ClearDisplay_MIN = max7219_clear_display_Minutes,
 .ClearDisplay_HOUR = max7219_clear_display_Hour,
 .Display_TemperatureAllDevice = max7219_display_Temperature,
+.Set_Intensity = max7219_intensity,
 };

@@ -25,7 +25,7 @@ void (*Display_HOUR)(uint8_t hour);
 void (*ClearDisplay_MIN)(void);
 void (*ClearDisplay_HOUR)(void);
 void (*Display_TemperatureAllDevice)(temperatureDevice_t TemperatureAllDevice);
-
+void (*Set_Intensity)(uint8_t DeviceNumber, uint8_t intensity);
 
 } max7219_interface_t ;
 

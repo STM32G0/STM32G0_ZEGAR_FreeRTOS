@@ -69,6 +69,13 @@ void max7219_clear(void) {
   }
 }
 
+/* funkcja do ustawienia intensywnosci swiecenia */
+/* dozwolone wartosci : 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31 */
+void max7219_intensity(uint8_t DeviceNumber, uint8_t intensity){
+
+max7219_SendToDevice(DeviceNumber, MAX7219_INTENSITY, intensity);  
+}
+
 /* funkcje do współpracy z MCP79410 i wyswietlania czasu*/
 void max7219_display_Minutes(uint8_t minutes){
 /* display minutes*/
