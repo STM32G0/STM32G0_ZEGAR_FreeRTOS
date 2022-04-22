@@ -281,18 +281,18 @@ void vTemperatureTask(void *pvParameters) {
 void vOptoResitorsTask(void *pvParameters) {
 
 uint8_t idx = 0 ; // zmienna iteracyna na potrzeby wyliczenia sredniej z ADC
-uint8_t okres = 5 ;
+uint8_t okres = 5 ; // okres za jaki usredniamy
 uint16_t srednia = 0 ;     // srednia z wartosci ADC
-static uint16_t suma = 0 ; // zmienna do przechowania sumy pomiarow ADC
+static uint16_t suma ; // zmienna do przechowania sumy pomiarow ADC
 
 
 for (;;) {
 
-suma += ADC1->DR ; // pobranie wartosci pomiaru z ADC
+suma += ADC1->DR ; // pobranie wartosci pomiaru z rejestru ADC
 idx++ ;
 if (idx == okres) {
 
-	srednia = suma / okres ;	// zmienna przechowuje usredniony pomiar
+	srednia = suma / okres ; // zmienna przechowuje usredniony pomiar
 	if (srednia > 501 )
 			{  max7219.Set_Intensity(Device0, night) ;	
                            max7219.Set_Intensity(Device1, night) ;
@@ -308,9 +308,9 @@ if (idx == okres) {
 
 #ifdef debug
     printf("Hello vOptoResitorsTask\n");
-    //printf("ADC %d\n", ADC1->DR);
+    printf("ADC average %d\n", suma);
 #endif
-vTaskDelay(1500 / portTICK_RATE_MS); // ADC reading , every 3.5 seconds
+vTaskDelay(1500 / portTICK_RATE_MS); // zadanie budzone co 1,5 sekundy.
 }
 
 
