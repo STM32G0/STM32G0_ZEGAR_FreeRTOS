@@ -34,8 +34,8 @@ IDE   : SEGGER Embedded Studio
 #define MAX7219_SHUTDOWN		0x0C	// tryb pracy wyswietlacza (0 - shutdown, 1 - normal)
 #define MAX7219_DISPLAY_TEST            0x0F	// test wyswietlacza (zalaczenie wszystkich segmentw)
 
-#define day 15  // wartosc intesywnosci swiecenia LED w dzien
-#define night 7 // wartosc intesywnosci swiecenia LED w ciemnosci
+#define day 13   // wartosc intesywnosci swiecenia LED w dzien
+#define night 5 // wartosc intesywnosci swiecenia LED w ciemnosci
 // -------------------------------------------------------------
 // ustawienie sposobu dekodowania danych na wyswietlaczu
 //
